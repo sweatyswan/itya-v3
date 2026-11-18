@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="sk">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Príď alebo pošli, všetko vieme opraviť.</title>
@@ -24,6 +25,7 @@
   --acc:#85EEDD; --acc-ink:#141817; --acc-soft:#E6FBF7; --acc-line:#0A5C54;
 
   --anno:#A8452C; --anno-soft:#FAEDE9; --anno-line:#E3BFB4;
+  --danger:#A8452C; --danger-soft:#FAEDE9;  /* chyby formulára, nie poznámky */
   --price:#F3B083;
   --radius:16px; --pill:999px;
   --font-ui:"Mulish", system-ui, -apple-system, Arial, sans-serif;
@@ -62,6 +64,10 @@
   --tri:#9980DD;          /* Itya fialová, geometria              */
   --tri-deep:#775AC5;     /* pôlnočná, trojuholník / pattern      */
   --tri-wash:rgba(153,128,221,.07);
+  --hero-wash:#F4F1FC;
+  --edge-wash:rgba(153,128,221,.09); /* jemný fialkový nádych pri ľavom a pravom okraji celého webu */
+  --edge-w:min(16vw, 220px);    /* hero: svetlá fialková pod bodkovým gridom */
+  --tri-shadow:rgba(119,90,197,.28); /* fialkový tieň kariet, ikon a šípok v hero */
   --hover-lift:0 8px 24px -12px rgba(20,24,23,.16);
 
   --lift:0 1px 2px rgba(20,24,23,.04), 0 8px 20px -14px rgba(20,24,23,.12);
@@ -74,8 +80,12 @@
 
 *{box-sizing:border-box}
 html,body{margin:0}
-html{background:var(--paper); overflow-x:clip; -webkit-text-size-adjust:100%}
-body{background:var(--paper); color:var(--ink);
+/* celý web: po ľavom a pravom kraji jemný fialkový prechod, stred ostáva biely (čitateľnosť).
+   Na html s background-attachment:fixed, takže drží pri scrollovaní; body je priehľadné, aby ho neprekrylo. */
+html{background:linear-gradient(to right, var(--edge-wash), transparent var(--edge-w),
+    transparent calc(100% - var(--edge-w)), var(--edge-wash)) fixed, var(--paper);
+  overflow-x:clip; -webkit-text-size-adjust:100%}
+body{background:transparent; color:var(--ink);
   font-family:var(--font-ui);
   font-size:var(--t-body); line-height:1.5; font-weight:var(--w-reg); -webkit-font-smoothing:antialiased;
   min-height:100vh}
@@ -106,6 +116,11 @@ button .ph, a .ph{cursor:pointer}
 .toggle[aria-pressed="true"]{background:var(--anno); border-color:var(--anno); color:#fff}
 
 .stage{padding:0}
+main{display:block}
+/* šípka pri odkaze nie je podčiarknutá, podčiarknutý je len text (inline-block nededí podčiarknutie) */
+.arr{display:inline-block; text-decoration:none}
+/* nadpisy dostanú fokus z kódu len kvôli čítačke pri zmene obrazovky; nie sú ovládacie prvky, rámik nepotrebujú */
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus{outline:none}
 .win{background:transparent; min-height:calc(100vh - 1.25rem); overflow-x:clip; position:relative}
 
 .sitehead{width:100%; max-width:none; margin:0; padding:0; position:relative; z-index:2;
@@ -119,27 +134,27 @@ button .ph, a .ph{cursor:pointer}
 .logo svg, .logo img{height:36px; width:auto; display:block; pointer-events:none}
 .sitenav{display:flex; gap:var(--s4); flex-wrap:wrap; flex:1; align-items:center}
 .sitenav button{background:none; border:0; padding:0; min-height:36px; font-size:var(--t-body); color:var(--head-ink)}
-.sitenav button:hover{color:var(--head-ink); box-shadow:inset 0 -2px 0 var(--mint)}
+@media (hover:hover){ .sitenav button:hover{color:var(--head-ink); box-shadow:inset 0 -2px 0 var(--mint)} }
 .sitenav button[data-on]{color:var(--head-ink); font-weight:var(--w-bold); box-shadow:inset 0 -2px 0 var(--mint)}
 .sitenav button.off{color:rgba(255,255,255,.88); cursor:default; pointer-events:none; opacity:1; box-shadow:none}
-.sitenav button.off:hover{color:rgba(255,255,255,.88); box-shadow:none}
+@media (hover:hover){ .sitenav button.off:hover{color:rgba(255,255,255,.88); box-shadow:none} }
 
 /* mäťová hlavička: pozadie #85EEDD, logo #775AC5; text/čipy mint-ink, lebo fialová na mäťe má 3,8:1 */
 body.head-mint .sitehead{background:var(--mint); color:var(--mint-ink)}
 body.head-mint .sitehead :focus-visible{outline-color:var(--mint-ink)}
 body.head-mint .logo{color:var(--head)}
 body.head-mint .sitenav button,
-body.head-mint .sitenav button:hover,
 body.head-mint .sitenav button[data-on]{color:var(--mint-ink)}
-body.head-mint .sitenav button:hover,
+@media (hover:hover){ body.head-mint .sitenav button:hover{color:var(--mint-ink)} }
 body.head-mint .sitenav button[data-on]{box-shadow:inset 0 -2px 0 var(--head)}
-body.head-mint .sitenav button.off,
-body.head-mint .sitenav button.off:hover{color:var(--mint-ink); box-shadow:none}
+@media (hover:hover){ body.head-mint .sitenav button:hover{box-shadow:inset 0 -2px 0 var(--head)} }
+body.head-mint .sitenav button.off{color:var(--mint-ink); box-shadow:none}
+@media (hover:hover){ body.head-mint .sitenav button.off:hover{color:var(--mint-ink); box-shadow:none} }
 body.head-mint .telchip{background:rgba(10,92,84,.14); color:var(--mint-ink)}
 body.head-mint .telchip b,
 body.head-mint .telchip small{color:var(--mint-ink)}
 body.head-mint .headpin{background:var(--head); color:#fff}
-body.head-mint .headpin:hover{background:#5E45A8; color:#fff}
+@media (hover:hover){ body.head-mint .headpin:hover{background:#5E45A8; color:#fff} }
 body.head-mint .headpin{
   animation-name:breathMint}
 @keyframes breathMint{
@@ -162,7 +177,9 @@ body.head-mint .bagbtn{color:var(--mint-ink)}
 .rating-meta{display:grid; gap:.15rem; align-content:center}
 .rating-lbl{font-size:var(--t-sm); font-weight:var(--w-semi); color:var(--ink); letter-spacing:.01em}
 .gstars{display:block; width:78px; height:14px}
-.stars{color:#FABB05; letter-spacing:.06em}
+.stars{color:#B8860B; letter-spacing:.06em}
+.stars-off{color:var(--line-2)}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0}
 .hero-mid .rating{margin-top:var(--s2)}
 
 .headutil{display:flex; align-items:center; gap:var(--s4); margin-left:auto; flex:none}
@@ -174,7 +191,7 @@ body.head-mint .bagbtn{color:var(--mint-ink)}
 .headpin{background:var(--mint); color:var(--ink);
   box-shadow:inset 0 0 0 1px transparent;
   animation:breath var(--breath) ease-in-out infinite; will-change:transform}
-.headpin:hover{background:#B7F6EC; color:var(--ink)}
+@media (hover:hover){ .headpin:hover{background:#B7F6EC; color:var(--ink)} }
 @keyframes breath{
   0%, 100%{transform:scale(1);
     box-shadow:0 0 0 0 rgba(133,238,221,.0)}
@@ -191,7 +208,7 @@ body.head-mint .bagbtn{color:var(--mint-ink)}
   background:none; border:0; color:var(--head-ink); padding:0; cursor:default}
 .bagbtn svg{width:24px; height:24px; display:block}
 .bagbtn .n{position:absolute; top:-4px; right:-6px; min-width:18px; height:18px; padding:0 var(--s1);
-  background:#E23B2E; color:#fff; border-radius:var(--pill); font-size:var(--t-eyebrow); font-weight:var(--w-bold);
+  background:#D32F2F; color:#fff; border-radius:var(--pill); font-size:var(--t-eyebrow); font-weight:var(--w-bold);
   display:grid; place-items:center; line-height:1}
 .navtog{display:none}
 .menu-tel{display:none}
@@ -233,7 +250,8 @@ a.btn{text-decoration:none}
   background-image:linear-gradient(transparent,transparent), linear-gradient(var(--head),var(--head));
   border-color:var(--head)}
 .btn.sm{padding:var(--s2) var(--s3); font-size:var(--t-sm)}
-.btn.link{background:none; background-image:none; overflow:visible; isolation:auto;
+/* textový odkaz: nie flex, inak sa šípka stane flex položkou a zdedí podčiarknutie (a gap zdvojí medzeru) */
+.btn.link{display:inline-block; gap:0; background:none; background-image:none; overflow:visible; isolation:auto;
   border:0; color:var(--mint-ink); text-decoration:underline;
   text-underline-offset:2px; padding:0; font-size:var(--t-sm); font-weight:var(--w-semi); border-radius:0; cursor:pointer}
 .btn:disabled{opacity:.38; cursor:not-allowed}
@@ -243,7 +261,8 @@ a.btn{text-decoration:none}
 .input:read-only{background:var(--fill-2); cursor:default}
 .static-val{padding:var(--s3) var(--s4); background:var(--fill-2); border:1px solid var(--line);
   border-radius:var(--radius); color:var(--ink-2); font-size:var(--t-body)}
-.field{display:grid; gap:var(--s1); margin-bottom:var(--s3)}
+.field{display:grid; grid-template-columns:minmax(0,1fr); gap:var(--s1); margin-bottom:var(--s3)}
+.field .input{min-width:0}  /* dátumové pole má vlastnú minimálnu šírku, na 320 px by pretieklo */
 .field .label{font-size:var(--t-sm)}
 .hint{font-size:var(--t-sm); color:var(--muted)}
 .lede-em{font-weight:var(--w-bold); color:var(--ink); background:var(--acc-soft);
@@ -256,34 +275,30 @@ a.btn{text-decoration:none}
 .g3{grid-template-columns:1fr 1fr 1fr}
 .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .row{display:flex; gap:var(--s3); flex-wrap:wrap; align-items:center}
-.stack{display:grid; gap:var(--s5)}
+/* minmax(0,1fr): stĺpec nesmie narásť nad šírku obrazovky kvôli najširšiemu dieťaťu (320 px) */
+.stack{display:grid; grid-template-columns:minmax(0,1fr); gap:var(--s5)}
 .stack > .row:has(> .btn:not(.link):not(.sm)){margin-top:var(--s5)}
 .sep{height:1px; background:var(--line); margin:var(--s5) 0}
 
-.pl-visit{position:relative; display:flex; align-items:center; justify-content:space-between; gap:var(--s4);
-  flex-wrap:wrap; padding:var(--s2) 2.75rem var(--s2) var(--s4); margin-bottom:var(--s5);
-  background:var(--acc-soft); border:1px solid var(--acc-line); border-radius:var(--radius)}
-.pl-visit-x{position:absolute; top:0; right:0; width:44px; height:44px; display:grid; place-items:center;
-  background:none; border:0; padding:0; color:var(--muted); cursor:pointer;
-  font-size:var(--t-lg); line-height:1; font-weight:var(--w-reg)}
-.pl-visit-x:hover{color:var(--ink)}
-.pl-visit-copy{display:grid; gap:var(--s3); flex:1; min-width:0}
-.pl-visit p{margin:0; font-weight:var(--w-reg); font-size:var(--t-body); line-height:1.45; color:var(--ink-2)}
-.pl-visit strong{font-weight:var(--w-bold); color:var(--ink-2)}
-.pl-visit-ship{display:flex; align-items:center; gap:var(--s2); width:fit-content; max-width:100%;
-  padding:var(--s1) var(--s4); background:#F7FBFC;
-  border:1px solid #8BA7A6; border-radius:var(--r-sm)}
-.pl-visit-ship svg{flex:none; display:block; color:var(--ink-2)}
-.pl-visit-coffee{flex:none; width:80px; height:80px; padding:0; border:0; background:none;
-  cursor:pointer; display:grid; place-items:center}
-.pl-visit-coffee img{width:80px; height:80px; object-fit:contain; pointer-events:none;
-  animation:coffeeBreath var(--breath) ease-in-out infinite; will-change:transform}
+/* ===== Medziobrazovka „Opravy nerezervujeme“ (pred „Čo mu je“) ===== */
+/* „Čo mu je“: pás s dvoma výhodami pod nadpisom (namiesto samostatnej obrazovky) */
+.pl-perks{display:grid; gap:var(--s4); margin:0 0 var(--s5); padding:var(--s4); list-style:none;
+  background:var(--acc-soft); border-radius:var(--r-md)}
+.pl-perks li{display:grid; grid-template-columns:32px minmax(0,1fr); gap:var(--s3); align-items:start;
+  font-size:var(--t-sm); line-height:var(--lh-sm); color:var(--ink-2)}
+.pl-perks strong{color:var(--ink); font-weight:var(--w-bold)}
+/* výhoda na vlastnom riadku, nie posledná veta odstavca */
+.pl-perk-plus{display:flex; width:fit-content; align-items:center; gap:var(--s1); margin-top:6px;  /* bližšie k svojmu bodu než medzera medzi bodmi (16 px) */
+  padding:2px var(--s2); background:var(--frame); border-radius:var(--pill);
+  font-size:.8125rem; font-weight:var(--w-semi); color:var(--acc-line)}
+.pl-perk-plus svg{flex:none; display:block}
+.pl-perk-pic{display:block; width:32px; height:32px; object-fit:contain; margin-top:-6px}  /* ikona statická: pri texte by pohyb odvádzal pozornosť */
 @keyframes coffeeBreath{
   0%, 100%{transform:translateY(0)}
   50%{transform:translateY(-6px)}
 }
 #plTitle{margin:0 0 var(--s3)}
-.pl-ask{font-size:var(--t-lg); margin:0 0 var(--s6); max-width:28ch}
+.pl-ask{font-size:var(--t-h2); line-height:var(--lh-h2); margin:0 0 var(--s2); max-width:28ch}
 .pl-descr{margin:0 0 var(--s6); display:grid; gap:var(--s2)}
 .pl-descr .row{margin:var(--s2) 0 0; align-items:center}
 .pl-descr-head{margin:0; font-size:var(--t-body); font-weight:var(--w-reg); color:var(--ink-2);
@@ -291,16 +306,100 @@ a.btn{text-decoration:none}
 .pl-layout{display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,360px); gap:var(--s5); align-items:start}
 .sol-panel{display:grid; gap:var(--s3); padding:var(--s4); border:1px solid var(--line);
   border-radius:var(--radius); background:var(--fill-2); box-shadow:var(--lift)}
+/* náhľad zariadenia v súhrne objednávky (heroHtml) */
 .sol-hero{display:grid; gap:var(--s2); min-width:0}
-.sol-hero img{display:block; width:100%; height:auto; object-fit:contain;
-  background:transparent}
+.sol-hero img{display:block; width:100%; height:auto; object-fit:contain; background:transparent}
 .sol-hero-name{margin:0; font-size:var(--t-body); font-weight:var(--w-bold); line-height:1.25}
-.sol-panel.is-empty .sol-hero img{aspect-ratio:1; padding:var(--s5); min-height:220px}
-.sol-panel.is-empty #solSummary{display:none}
-.sol-panel:not(.is-empty) .sol-hero{
-  grid-template-columns:64px minmax(0,1fr); align-items:center; gap:var(--s3)}
+.sol-panel:not(.is-empty) .sol-hero{grid-template-columns:64px minmax(0,1fr); align-items:center; gap:var(--s3)}
 .sol-panel:not(.is-empty) .sol-hero img{width:64px; height:64px; padding:var(--s1); min-height:0}
 .sol-panel:not(.is-empty) .sol-hero-name{font-size:var(--t-sm); font-weight:var(--w-bold)}
+.sol-panel.is-empty #solSummary{display:none}
+
+/* „Čo mu je“ ako produktová stránka: fotka vľavo v širšom stĺpci, obsah vpravo */
+.pl-product{grid-template-columns:minmax(0,7fr) minmax(0,5fr); grid-template-rows:auto 1fr; gap:0 var(--s7)}
+/* obsah vpravo ostane hore, aj keď je stĺpec fotiek dlhší */
+.pl-product > div:not(.pl-rail){align-self:start}
+.pl-product > #plTitle{grid-column:2; grid-row:1}
+.pl-product > .pl-rail{grid-column:1; grid-row:1 / span 2}
+.pl-extra{display:grid; gap:var(--s3); margin-top:var(--s5)}
+.pl-extra:not(:has(> :not([hidden]))){display:none}
+/* lišta zospodu (vzor iStores): čo si popísal, orientačná cena, pokračovať */
+.plbar{position:fixed; left:0; right:0; bottom:0; z-index:25; background:var(--frame);
+  border-top:1px solid var(--line); box-shadow:0 -8px 24px -16px rgba(20,24,23,.28);
+  transform:translateY(110%); visibility:hidden;
+  transition:transform .3s cubic-bezier(.2,0,0,1), visibility 0s linear .3s}
+.plbar.is-on{transform:none; visibility:visible; transition:transform .3s cubic-bezier(.2,0,0,1)}
+.plbar-in{display:grid; grid-template-columns:auto minmax(0,1fr) auto auto auto; align-items:center; gap:var(--s3) var(--s5);
+  max-width:1440px; margin:0 auto; padding:var(--s3) max(var(--screen-pad), env(safe-area-inset-right,0px)) calc(var(--s3) + env(safe-area-inset-bottom,0px)) max(var(--screen-pad), env(safe-area-inset-left,0px))}
+.plbar-pic{width:48px; height:48px; object-fit:cover; border-radius:var(--r-sm); outline:1px solid rgba(0,0,0,.1); outline-offset:-1px}
+.plbar-what{min-width:0; display:grid; gap:2px}
+.plbar-model{margin:0; font-weight:var(--w-bold); line-height:1.3}
+.plbar-items{margin:0; font-size:var(--t-sm); line-height:var(--lh-sm); color:var(--ink-2); text-wrap:pretty}
+.plbar-total{display:grid; gap:2px; justify-items:end; text-align:end}
+.plbar-sum{margin:0; display:flex; align-items:baseline; gap:var(--s2); white-space:nowrap}
+.plbar-lbl{font-size:var(--t-sm); color:var(--ink-2)}
+.plbar-price{font-family:"IBM Plex Mono",monospace; font-weight:var(--w-semi); font-size:var(--t-h2);
+  font-variant-numeric:tabular-nums; background:var(--price); padding:0 var(--s1); border-radius:var(--r-sm)}
+.plbar-note{margin:0; font-size:.8125rem; line-height:1.35; color:var(--muted)}
+/* desktop a tablet: lišta dýcha viac (padding 24 px hore aj dole, väčší náhľad, tlačidlá 48 px, riadky textu ďalej od seba) */
+@media (min-width:640px){
+  .plbar-in{padding-block:var(--s5) calc(var(--s5) + env(safe-area-inset-bottom,0px)); column-gap:var(--s5)}
+  .plbar-pic{width:56px; height:56px; border-radius:var(--r-md)}
+  .plbar-what, .plbar-total{gap:var(--s1)}
+  .plbar-share, .plbar-go{min-height:48px}
+  .plbar-go{padding-inline:var(--s5)}
+}
+/* tablet: menej miesta, preto bez doplnkovej poznámky a „Zdieľať“ len ako ikona (názov ostáva pre čítačku) */
+@media (min-width:640px) and (max-width:1023px){
+  .plbar-in{column-gap:var(--s3)}
+  .plbar-note{display:none}
+  .plbar-share{width:48px; padding-inline:0}
+  .plbar-share-t{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+}
+.plbar-go{white-space:nowrap}
+/* sekundárna akcia: obrysová, ikona + text; primárna ostáva jediná plná */
+.plbar-share{white-space:nowrap; gap:var(--s2)}
+.plbar-share svg{flex:none; display:block}
+/* potvrdenie po skopírovaní: nad lištou, samo zmizne, čítačka ho ohlási (role=status) */
+.plbar-status{position:absolute; right:max(var(--screen-pad), env(safe-area-inset-right,0px)); bottom:calc(100% + var(--s2));
+  margin:0; max-width:min(26rem, calc(100vw - 2 * var(--screen-pad))); padding:var(--s2) var(--s3);
+  background:var(--ink); color:#fff; font-size:var(--t-sm); line-height:var(--lh-sm);
+  border-radius:var(--r-md); box-shadow:var(--lift)}
+.plbar-status:empty{display:none}
+/* obsah aj fokus nikdy nezmiznú pod lištou (WCAG 2.4.11) */
+.screen[data-screen="pricelist"]:has(.plbar.is-on){padding-bottom:calc(var(--s7) + 6rem)}
+html:has(.screen:not([hidden]) .plbar.is-on){scroll-padding-bottom:8rem}
+.pl-product > div:not(.pl-rail){grid-column:2; grid-row:2}
+.pl-gallery{display:grid; gap:var(--s3); min-width:0}
+.pl-photo{margin:0; min-width:0}
+.pl-photo img{display:block; width:100%; height:auto; aspect-ratio:4 / 3; object-fit:cover;
+  border-radius:var(--r-lg); outline:1px solid rgba(0,0,0,.1); outline-offset:-1px;
+  max-height:calc(100dvh - 22rem)}  /* miesto pre miniatúry aj lištu zospodu */
+.pl-thumbs{display:flex; flex-wrap:wrap; justify-content:center; gap:var(--s2)}
+.pl-thumb{width:64px; height:64px; padding:0; overflow:hidden; cursor:pointer;
+  background:var(--frame); border:1px solid var(--line); border-radius:var(--r-md);
+  transition:border-color .15s ease-out}
+.pl-thumb img{display:block; width:100%; height:100%; object-fit:cover; pointer-events:none}
+.pl-thumb[aria-current="true"]{border-color:var(--acc-line); box-shadow:0 0 0 1px var(--acc-line)}
+@media (hover:hover){ .pl-thumb:hover{border-color:var(--ink)} }
+.pl-stack{display:none}
+@media (min-width:900px){
+  /* desktop ako iStores: fotky rozbalené pod sebou, stĺpec sa posúva so stránkou (nie je lepkavý) */
+  .pl-product .pl-rail{position:static}
+  .pl-product .pl-photo, .pl-product .pl-thumbs{display:none}
+  /* ako iStores: hlavná fotka cez celú šírku, ostatné v mriežke po dvoch */
+  .pl-stack{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--s3)}
+  .pl-stack img{display:block; width:100%; height:auto; aspect-ratio:1; object-fit:cover;
+    border-radius:var(--r-lg); outline:1px solid rgba(0,0,0,.1); outline-offset:-1px}
+  .pl-stack img:first-child{grid-column:1 / -1; aspect-ratio:4 / 3}
+  /* posledná fotka bez páru by nechala dieru: ide cez celú šírku */
+  .pl-stack img:last-child:nth-child(even){grid-column:1 / -1; aspect-ratio:4 / 3}
+}
+.pl-product .symcat-grid{--cols:1; grid-template-columns:minmax(0,1fr)}
+/* bublina v úzkom stĺpci: bez ilustrácie, text na celú šírku (vizuál nesie fotka vľavo) */
+.pl-product .symmore, .pl-product .symmore.is-free{grid-template-columns:minmax(0,1fr)}
+.pl-product .symmore-pic{display:none}
+.pl-product .symmore-copy{width:auto; max-width:none; min-width:0; border-radius:var(--radius); background:var(--fill)}
 .sol-panel > .row:has(> .btn:not(.link):not(.sm)){margin-top:var(--s5)}
 .sol-panel > .summary{border-top:1px solid var(--line-2); padding-top:var(--s3)}
 .pl-rail{display:grid; gap:var(--s3); position:sticky; top:calc(1.25rem + env(safe-area-inset-top,0px) + var(--s2)); align-self:start}
@@ -310,20 +409,23 @@ a.btn{text-decoration:none}
 .symcat-head{display:flex; align-items:center; gap:var(--s3); margin-bottom:var(--s2)}
 .ph.symcat-ph{width:52px; height:52px; flex:none; padding:0; overflow:hidden}
 .symcat-ph img{display:block; width:100%; height:100%; object-fit:cover}
-.symcat h4{font-size:var(--t-body); font-weight:var(--w-bold)}
+.symcat h3{font-size:var(--t-body); font-weight:var(--w-bold); line-height:1.25}
 .symcat-grid{--cols:3; --g:.5rem; display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
   gap:var(--g); align-items:stretch}
 .symcard{position:relative; border:1px solid var(--line-2); border-radius:var(--radius); background:var(--frame);
   display:flex; flex-direction:column; overflow:hidden; isolation:isolate;
   transition:border-color .18s ease, background .18s ease, border-radius .18s ease, transform var(--spring-swift-ms) var(--spring-swift), box-shadow var(--press-color)}
-.symcard:hover{border-color:var(--ink)}
+.symmain:focus-visible{outline:none}
+.symcard:has(.symmain:focus-visible){outline:var(--bw-focus) solid var(--acc-line); outline-offset:2px}
+@media (hover:hover){ .symcard:hover{border-color:var(--ink)} }
 .symcard[data-on="1"]{border-color:var(--mint-ink); background:var(--mint)}
 .symmain{border:0; background:none; text-align:left; cursor:pointer; width:100%;
   padding:var(--s3) var(--s3) var(--s3); display:grid; grid-template-columns:minmax(0,1fr) auto;
   gap:0 var(--s2); align-items:center}
 .symmain .t{grid-column:1; grid-row:1; font-size:var(--t-sm); font-weight:var(--w-semi); line-height:1.3}
-.symmain .symprice{grid-column:1; grid-row:2; font-family:"IBM Plex Mono",monospace;
-  font-size:var(--t-sm); color:var(--ink); justify-self:start}
+/* cena v zatvorenej karte je doplnkový údaj: menšia, tichšia, bežným písmom; hlavný je názov závady */
+.symmain .symprice{grid-column:1; grid-row:2; margin-top:2px; font-size:.8125rem; line-height:1.35;
+  font-weight:var(--w-reg); color:var(--muted); font-variant-numeric:tabular-nums; justify-self:start}
 .symcard[data-on="1"] .symmain .symprice{color:var(--ink)}
 .symmain .chev{grid-column:2; grid-row:1 / -1; color:var(--mint-ink); display:grid;
   place-items:center; line-height:0; align-self:center; width:22px; height:22px}
@@ -356,22 +458,38 @@ a.btn{text-decoration:none}
   border-radius:var(--radius) 0 0 var(--radius);
   background:linear-gradient(to right, var(--fill) 0%, var(--paper) 68%)}
 .symmore-copy > *{position:relative; z-index:1}
-.symmore-copy > .lead{font-size:var(--t-lg); font-weight:var(--w-bold); color:var(--ink); line-height:1.3; margin:0}
+.symmore-copy > .lead{font-family:var(--font-display); font-size:var(--t-lg); font-weight:var(--w-bold); color:var(--ink); line-height:1.3; margin:0; text-wrap:balance}
+/* výhrada patrí k zoznamu nad ňou: tichá a bližšie k nemu než k tlačidlu */
+.symmore-note{margin:0; font-size:var(--t-sm); line-height:var(--lh-sm); color:var(--ink-2); text-wrap:pretty;
+  display:flex; align-items:flex-start; gap:var(--s2); padding:var(--s2) var(--s3);
+  background:rgba(20,24,23,.05); border-radius:var(--r-md)}  /* --fill je v bubline prepísaná na jej podklad */
+.symmore-note svg{flex:none; width:16px; height:16px; margin-top:2px; color:var(--muted)}
+/* pod poľom na text je to len nápoveda k poľu: bez podkladu, blízko poľa */
+.symmore-copy.is-free .symmore-note{margin-top:calc(-1 * var(--s1)); padding:0; background:none; color:var(--muted)}
 .symmore-pic{position:relative; z-index:2; min-height:14rem; min-width:0; background:var(--frame);
   overflow:hidden; border-radius:0 var(--radius) var(--radius) 0}
 .symmore-pic img{position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover}
-.solalts{display:grid; gap:var(--s2)}
-.solalt{position:relative; isolation:isolate; overflow:hidden; border:1px solid var(--line); border-radius:var(--radius); background:var(--frame);
-  box-shadow:var(--lift); padding:var(--s2) var(--s3); display:grid; gap:var(--s1);
-  cursor:default}
+/* možné opravy v bubline: cenník, nie karty — bez rámčeka, tieňa a pozadia,
+   aby nevyzerali klikateľne ako karty závad nad nimi */
+.solalts{display:grid; gap:0; margin:0; padding:0; list-style:none}
+.solalt{display:grid; gap:2px; padding:var(--s3) 0; border-top:1px solid var(--line)}
+.solalt:first-child{border-top:0; padding-top:0}
+.solalt:last-child{padding-bottom:0}
 .solalt .n{font-weight:var(--w-semi); font-size:var(--t-sm); line-height:1.35;
   display:flex; justify-content:space-between; gap:var(--s3); align-items:baseline}
 .solalt .n em{font-style:normal; font-family:"IBM Plex Mono",monospace;
   font-weight:var(--w-semi); color:var(--ink); font-size:var(--t-sm); white-space:nowrap}
 .solalt .d{font-size:var(--t-sm); color:var(--muted); line-height:1.45}
-.solalt .tiers{margin-top:var(--s2); padding:var(--s2) var(--s3); background:var(--fill-2)}
-.solalt .tiers summary{font-size:var(--t-sm)}
-.symmore-foot{display:flex; justify-content:flex-start}
+/* podriadky ceny: odsadené s tenkou čiarou vľavo, patria k oprave nad nimi */
+.tiers-inline{margin-top:var(--s2); padding-inline-start:var(--s3); border-inline-start:2px solid var(--line)}
+.tiers-inline .tier-list{margin:0}
+.tiers-inline .tier-row:first-child{padding-top:0}
+.tier-note{margin:var(--s1) 0 0; font-size:var(--t-sm); line-height:1.45; color:var(--muted); text-wrap:pretty}
+.symmore-foot{display:flex; flex-wrap:wrap; gap:var(--s3); justify-content:flex-start}
+/* rozbalená možnosť „Opíšem to vlastnými slovami“: pole na text v bubline */
+.symmore.is-free{grid-template-columns:minmax(0,3fr) minmax(10rem,2fr)}
+.symmore-copy.is-free{width:auto; max-width:none; min-width:0; gap:var(--s3)}
+.symmore-copy.is-free .input{min-height:6.5rem; resize:vertical; background:var(--frame)}
 .symmore-foot .btn{min-height:44px}
 .picked{display:grid; gap:var(--s2)}
 .sol-head{font-size:var(--t-lg); margin:0}
@@ -383,8 +501,9 @@ a.btn{text-decoration:none}
 .pickrow .p{font-family:"IBM Plex Mono",monospace; font-size:var(--t-sm);
   color:var(--ink); white-space:nowrap}
 .pickrow .x{background:none; border:0; color:var(--muted); cursor:pointer;
-  font-size:var(--t-lg); line-height:1; padding:0; font-weight:var(--w-reg)}
-.pickrow .x:hover{color:var(--ink)}
+  font-size:var(--t-lg); line-height:1; padding:0; font-weight:var(--w-reg);
+  display:grid; place-items:center; min-width:32px; min-height:32px; margin:-8px -8px -8px 0; border-radius:var(--pill)}
+@media (hover:hover){ .pickrow .x:hover{color:var(--ink)} }
 .picked-empty{font-size:var(--t-sm); color:var(--muted); line-height:1.5; margin:0}
 .plnext{display:grid; gap:var(--s2); border-top:1px solid var(--line-2);
   padding-top:var(--s6); margin-top:var(--s2)}
@@ -397,7 +516,7 @@ a.btn{text-decoration:none}
 .crumb button{background:none; border:0; padding:0; margin:0; font:inherit; font-weight:var(--w-semi);
   color:var(--ink-2); cursor:pointer; text-decoration:underline;
   text-decoration-color:var(--line-2); text-underline-offset:3px; text-decoration-thickness:1px}
-.crumb button:hover{color:var(--mint-ink); text-decoration-color:currentColor}
+@media (hover:hover){ .crumb button:hover{color:var(--mint-ink); text-decoration-color:currentColor} }
 .crumb .crumb-sep{color:var(--line-2); font-size:var(--t-sm); user-select:none}
 .crumb .here{color:var(--ink); font-weight:var(--w-bold)}
 
@@ -411,22 +530,24 @@ a.btn{text-decoration:none}
   transition:transform .18s ease}
 .symcard[data-open="1"] .chev::before,
 .tiers[open] summary::before{transform:rotate(-90deg)}
-.tiers summary:hover{color:var(--ink-2)}
+@media (hover:hover){ .tiers summary:hover{color:var(--ink-2)} }
 .sol-panel .tiers{padding:var(--s2) var(--s3); margin-top:var(--s2)}
 .sol-panel .tiers summary{font-size:var(--t-sm)}
-.tier-list{display:grid; gap:var(--s1); margin-top:var(--s2)}
-.tier-row{display:grid; grid-template-columns:1fr auto; gap:0 var(--s2);
-  padding:var(--s2) var(--s2); border:1px solid var(--line); border-radius:var(--r-sm); background:var(--frame)}
-.tier-row.hl{background:var(--acc-soft); border-color:var(--acc-line)}
-.tier-row .n{font-weight:var(--w-semi); font-size:var(--t-sm); display:flex; align-items:center; gap:var(--s1); flex-wrap:wrap}
-.tier-row .p{font-family:"IBM Plex Mono",monospace; font-size:var(--t-sm); white-space:nowrap; color:var(--ink)}
+/* úrovne panela: tiež cenník, nie karty na výber. Bez rámčeka a výplne,
+   „najčastejšia“ nesie štítok (text), nie farba celého riadku */
+.tier-list{display:grid; gap:0; margin:var(--s2) 0 0; padding:0; list-style:none}
+.tier-row{display:grid; grid-template-columns:1fr auto; gap:2px var(--s2); padding:var(--s2) 0}
+.tier-row + .tier-row{border-top:1px solid var(--line)}
+.tier-row .n{font-weight:var(--w-semi); font-size:var(--t-sm); display:flex; align-items:center; gap:var(--s2); flex-wrap:wrap}
+.tier-row .badge{border-color:transparent; background:var(--acc-soft); color:var(--acc-line)}
+.tier-row .p{font-family:"IBM Plex Mono",monospace; font-size:var(--t-sm); font-weight:var(--w-semi); white-space:nowrap; color:var(--ink)}
 .tier-row .d{grid-column:1/-1; font-size:var(--t-sm); color:var(--muted); line-height:1.35}
 #refurbOffer:not([hidden]){display:grid; gap:var(--s2); margin-top:var(--s1);
   padding-top:var(--s3); border-top:1px dashed var(--line-2)}
 #refurbOffer .label{margin:0}
 #refurbOffer button.card{flex-direction:row; align-items:center; gap:var(--s3); padding:var(--s3) var(--s3)}
 #refurbOffer .refurb-pic{width:52px; height:68px; object-fit:contain; flex:none; pointer-events:none}
-#refurbOffer .refurb-copy{min-width:0}
+#refurbOffer .refurb-copy{flex:1; min-width:0}
 #refurbOffer .refurb-copy .p{color:var(--ink)}
 #refurbOffer .refurb-copy p{margin-top:var(--s1); font-size:var(--t-sm); line-height:1.35}
 
@@ -438,7 +559,7 @@ a.btn{text-decoration:none}
 .card.lead{background:var(--frame); border-color:var(--line)}
 button.card{position:relative; cursor:pointer; box-shadow:none; text-align:left;
   display:flex; flex-direction:column; align-items:stretch; overflow:hidden; isolation:isolate}
-button.card:hover{border-color:var(--ink); background:var(--paper)}
+@media (hover:hover){ button.card:hover{border-color:var(--ink); background:var(--paper)} }
 .card.is-static{cursor:default; color:var(--ink-2)}
 .card.is-static h4{color:var(--muted); font-weight:var(--w-semi)}
 .card.is-static .ph{opacity:.55}
@@ -453,7 +574,7 @@ button.card .card-pic{cursor:pointer}
 .pick{position:relative; border:1px solid var(--line-2); border-radius:var(--radius); padding:var(--s3) var(--s4);
   background:var(--frame); text-align:left; display:grid; gap:var(--s1); width:100%; cursor:pointer;
   overflow:hidden; isolation:isolate}
-.pick:hover{border-color:var(--ink); background:var(--paper)}
+@media (hover:hover){ .pick:hover{border-color:var(--ink); background:var(--paper)} }
 .pick[aria-pressed="true"]{border-color:var(--mint-ink); background:var(--mint)}
 .pick[aria-pressed="true"] .d{color:var(--ink-2)}
 .pick .t{font-weight:var(--w-semi); font-size:var(--t-body); display:flex; justify-content:space-between;
@@ -466,7 +587,7 @@ button.card .card-pic{cursor:pointer}
 .pick dd{margin:0; color:var(--ink-2)}
 .pick > .badge{justify-self:start}
 .pl-box{border:1px solid var(--line); border-radius:var(--r-xl); padding:var(--s5) var(--s5);
-  background:var(--frame); box-shadow:var(--lift); display:grid; gap:var(--s3); align-content:start}
+  background:var(--frame); box-shadow:var(--lift); display:grid; grid-template-columns:minmax(0,1fr); gap:var(--s3); align-content:start}
 .pl-box h3{font-size:var(--t-h2); line-height:1.25; margin:0; max-width:22ch}
 .pl-box > p{font-size:var(--t-body); color:var(--ink-2); line-height:1.45}
 .pl-box ol{margin:0; padding-left:var(--s5); color:var(--ink-2); font-size:var(--t-body); line-height:1.55}
@@ -487,7 +608,7 @@ button.card .card-pic{cursor:pointer}
 .walk-map{position:relative; display:block; min-height:168px; height:100%;
   border-radius:var(--r-md); overflow:hidden; border:1px solid var(--line); background:var(--fill)}
 .walk-map iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
-.walk-upsell{display:grid; gap:var(--s2); margin:var(--s5) 0 0; padding:var(--s3) var(--s4);
+.walk-upsell{display:grid; grid-template-columns:minmax(0,1fr); gap:var(--s2); margin:var(--s5) 0 0; padding:var(--s3) var(--s4);
   border:1px dashed var(--line-2); border-radius:var(--r-lg); background:var(--fill-2)}
 .walk-upsell:has(.coffee-done:not([hidden])){gap:var(--s5)}
 .coffee-done:not([hidden]){display:grid; gap:var(--s5)}
@@ -517,7 +638,7 @@ button.card .card-pic{cursor:pointer}
 .coffee-check-box{width:1.05rem; height:1.05rem; flex:none; border:1.5px solid var(--line-2);
   border-radius:var(--r-sm); background:var(--frame); display:grid; place-items:center}
 .coffee-check img{width:1.25rem; height:1.25rem; object-fit:contain; pointer-events:none}
-.coffee-check:hover .coffee-check-box{border-color:var(--mint-ink)}
+@media (hover:hover){ .coffee-check:hover .coffee-check-box{border-color:var(--mint-ink)} }
 .coffee-check[aria-checked="true"] .coffee-check-box{background:var(--mint); border-color:var(--mint-ink)}
 .coffee-check[aria-checked="true"] .coffee-check-box::after{content:""; width:.32rem; height:.55rem;
   border:solid var(--ink); border-width:0 2px 2px 0; transform:rotate(45deg) translateY(-1px)}
@@ -525,10 +646,10 @@ button.card .card-pic{cursor:pointer}
 .coffee-form .field:last-of-type{margin-bottom:0}
 .coffee-form .field.is-invalid .input,
 .coffee-form .field.is-invalid .seg{
-  border-color:var(--anno); background:var(--anno-soft);
-  box-shadow:0 0 0 1px var(--anno)}
-.coffee-form .field.is-invalid .label{color:var(--anno)}
-.coffee-err:not([hidden]){display:block; color:var(--anno); font-weight:var(--w-semi); margin-top:var(--s5)}
+  border-color:var(--danger); background:var(--danger-soft);
+  box-shadow:0 0 0 1px var(--danger)}
+.coffee-form .field.is-invalid .label{color:var(--danger)}
+.coffee-err:not([hidden]){display:block; color:var(--danger); font-weight:var(--w-semi); margin-top:var(--s5)}
 .coffee-form > .btn:not(.link){margin-top:var(--s5)}
 .coffee-form:has(.coffee-err:not([hidden])) > .btn:not(.link){margin-top:var(--s2)}
 .contact-page{max-width:720px}
@@ -556,7 +677,7 @@ button.card .card-pic{cursor:pointer}
   font-size:var(--t-sm); padding:var(--s1) var(--s3); border-right:1px solid var(--line-2); position:relative}
 .seg button:first-child{border-top-left-radius:inherit; border-bottom-left-radius:inherit}
 .seg button:last-child{border-top-right-radius:inherit; border-bottom-right-radius:inherit; border-right:0}
-.seg button:hover{background:var(--fill); cursor:pointer}
+@media (hover:hover){ .seg button:hover{background:var(--fill); cursor:pointer} }
 .seg button[aria-pressed="true"]{background:var(--mint); color:var(--ink); font-weight:var(--w-semi)}
 .seg button[aria-pressed="true"]::after{content:""; position:absolute; inset:0;
   border:1px solid var(--mint-ink); border-radius:inherit; pointer-events:none}
@@ -575,8 +696,30 @@ button.card .card-pic{cursor:pointer}
 body:not(.notes) .anno{display:none}
 
 /* ---------- hero ring ---------- */
-.hero{position:relative; display:grid; min-height:800px; place-items:center; padding-block:var(--s4) var(--s1); overflow:hidden}
-.hero-bg{display:none}
+.hero{position:relative; isolation:isolate; display:grid; min-height:800px; place-items:center; padding-block:var(--s4) var(--s1); overflow:visible}
+/* podklad hero: cez celú sekciu, od hornej lišty po pás so štatistikami a od hrany po hranu okna (presah orezáva .win).
+   Fialková je najsýtejšia v strede a ku krajom a rohom plynulo ubúda (do priehľadnej, aby nadviazala na
+   fialkové okraje webu na html); bodky (::before) ubúdajú s ňou.
+   Dekorácia, mimo klikania. */
+/* hero: stredový pás od vrchu po spodok (text, tlačidlá) je priehľadný, teda biely ako zvyšok webu;
+   fialková je len po bokoch, kde bežia kroky a šípky, a pri samom okraji ubudne do okrajov webu (html).
+   Body prechodu sú v px od stredu, aby pás sedel na texte pri každej šírke okna. Bodky (::before) rovnako. */
+.hero-bg{--a:max(6%, calc(50% - 720px)); --b:calc(50% - 470px); --c:calc(50% - 270px);
+  --d:calc(50% + 270px); --e:calc(50% + 470px); --f:min(94%, calc(50% + 720px));
+  display:block; position:absolute; z-index:-1; pointer-events:none;
+  top:calc(-1 * var(--s6)); bottom:calc(-1 * var(--s7)); left:calc(50% - 50vw); right:calc(50% - 50vw);
+  background:linear-gradient(to right, rgba(244,241,252,0) 0, var(--hero-wash) var(--a), var(--hero-wash) var(--b),
+    rgba(244,241,252,0) var(--c), rgba(244,241,252,0) var(--d),
+    var(--hero-wash) var(--e), var(--hero-wash) var(--f), rgba(244,241,252,0) 100%);
+  /* bočná fialková sa ku spodku hero stráca, aby plynulo prešla do jemných okrajov zvyšku webu (html) */
+  -webkit-mask-image:linear-gradient(to bottom, #000 0, #000 50%, rgba(0,0,0,.25) 88%, rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(to bottom, #000 0, #000 50%, rgba(0,0,0,.25) 88%, rgba(0,0,0,0) 100%)}
+.hero-bg::before{content:""; position:absolute; inset:0;
+  background:radial-gradient(circle, rgba(119,90,197,.2) 1px, transparent 1.5px) center top / 22px 22px;
+  -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,.12) 0, #000 var(--a), #000 var(--b),
+    rgba(0,0,0,.06) var(--c), rgba(0,0,0,.06) var(--d), #000 var(--e), #000 var(--f), rgba(0,0,0,.12) 100%);
+  mask-image:linear-gradient(to right, rgba(0,0,0,.12) 0, #000 var(--a), #000 var(--b),
+    rgba(0,0,0,.06) var(--c), rgba(0,0,0,.06) var(--d), #000 var(--e), #000 var(--f), rgba(0,0,0,.12) 100%)}
 .tri-field{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
 .tri{position:absolute; width:var(--tri-size,28px); aspect-ratio:74/84;
   background:var(--tri); clip-path:polygon(50% 0, 100% 100%, 0 100%);
@@ -613,7 +756,8 @@ body:not(.notes) .anno{display:none}
 .hero-mid h1 .hero-or{font-weight:var(--w-reg); font-size:inherit}
 .hero-mid > .row{margin-top:var(--s4); flex-wrap:nowrap; width:max-content; max-width:100%; justify-content:center}
 .pipe{display:grid; justify-items:center; gap:var(--s1); width:100%}
-.pipe3d{width:72px; height:72px; object-fit:contain; pointer-events:none}
+.pipe3d{width:84px; height:84px; object-fit:contain; pointer-events:none;
+  filter:drop-shadow(0 12px 12px rgba(119,90,197,.2)) drop-shadow(0 2px 3px rgba(119,90,197,.16))}
 /* levitujú len prvé dva uzly, dve cesty na začiatku. Zvyšok procesu stojí. */
 .np1 .pipe3d{animation:pipeFloatA 5.5s ease-in-out infinite; will-change:transform}
 .np2 .pipe3d{animation:pipeFloatB 6.8s ease-in-out infinite; animation-delay:-1.9s; will-change:transform}
@@ -633,17 +777,18 @@ body:not(.notes) .anno{display:none}
   100%{transform:translateY(-2px)   rotate(3deg)}
 }
 @media (prefers-reduced-motion:reduce){
-  .np1 .pipe3d, .np2 .pipe3d, .walk-coffee-ico, .pl-visit-coffee img, .headpin{animation:none}
+  .np1 .pipe3d, .np2 .pipe3d, .walk-coffee-ico, .headpin{animation:none}
 }
-.node{background:var(--frame); border:1px solid var(--line); border-radius:var(--r-md);
+/* karty krokov: biele, bez rámika, mäkký fialkový tieň (transparentný border drží obrys vo forced-colors) */
+.node{background:var(--frame); border:1px solid transparent; border-radius:var(--r-md);
   padding:var(--s2) var(--s3); display:flex; align-items:center; gap:var(--s2); min-height:44px;
-  cursor:default; pointer-events:none; box-shadow:var(--lift); width:100%}
+  cursor:default; pointer-events:none; width:100%;
+  box-shadow:0 1px 2px rgba(119,90,197,.08), 0 10px 24px -10px var(--tri-shadow)}
 .node .ic{width:22px; height:22px; border-radius:var(--r-sm); display:grid; place-items:center;
   font-size:var(--t-eyebrow); background:var(--fill); color:var(--ink-2); flex:none;
   font-family:"IBM Plex Mono",monospace; font-weight:var(--w-semi)}
 .node .tx{font-size:var(--t-sm); font-weight:var(--w-semi); line-height:1.25}
 .node .tx small{display:block; font-weight:var(--w-reg); font-size:var(--t-eyebrow); color:var(--muted); margin-top:0}
-.node.alt{background:var(--fill-2)}
 .node.end{border-color:var(--mint-ink); background:var(--acc-soft)}
 .node.end .ic{background:var(--mint); color:var(--ink)}
 .node.end .tx{font-weight:var(--w-semi); color:var(--ink)}
@@ -651,6 +796,7 @@ body:not(.notes) .anno{display:none}
 .ringnodes{display:block; position:absolute; inset:0; padding:0; z-index:2; overflow:visible; pointer-events:none}
 .ringnodes::before{display:none}
 .ringnodes > *{position:absolute; width:210px}
+.ringnodes > .ring-m{display:none}
 .np1{left:0; top:2%}
 .np2{left:0; top:26%}
 .np3{left:auto; right:0; top:18%}
@@ -687,28 +833,54 @@ body:not(.notes) .anno{display:none}
 .intake{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--s2)}
 .intake figure{margin:0; aspect-ratio:4/3; overflow:hidden; border:1px solid var(--line); background:var(--fill)}
 .intake img{display:block; width:100%; height:100%; object-fit:cover}
-.gbtn:hover{border-color:var(--mint-ink); background:var(--fill-2)}
+@media (hover:hover){ .gbtn:hover{border-color:var(--mint-ink); background:var(--fill-2)} }
 
+/* ---------- jednokroková objednávka (Shopify vzor) ---------- */
+.co-layout{display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,400px); gap:var(--s7); align-items:start}
+.co-main{grid-column:1; grid-row:1; min-width:0; max-width:40rem}
+.co-side{grid-column:2; grid-row:1; position:sticky; top:calc(1.25rem + env(safe-area-inset-top,0px) + var(--s2)); min-width:0}
+.co-head{display:grid; gap:var(--s2)}
+.co-head h1{margin:0}
+.co-form{display:grid; gap:var(--s7)}
+.co-sec{display:grid; gap:var(--s3); min-width:0}
+.co-sec h2{margin:0; font-size:var(--t-h2); line-height:var(--lh-h2)}
+.co-set{display:grid; gap:var(--s3); min-width:0; margin:0; padding:0; border:0}
+.co-set legend{padding:0; margin:0 0 var(--s3)}
+.co-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 var(--s3)}
+.co-grid .field{margin-bottom:var(--s3)}
+.co-full{grid-column:1 / -1}
+.co-grid > .hint{margin:calc(-1 * var(--s2)) 0 0}
+.co-opt-note{font-weight:var(--w-reg)}
+.co-opts{display:grid; gap:var(--s2)}
+.co-opt{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:var(--s1) var(--s3); align-items:start;
+  padding:var(--s3) var(--s4); background:var(--frame); border:1px solid var(--line-2); border-radius:var(--radius);
+  cursor:pointer; transition:border-color .15s ease-out, background-color .15s ease-out}
+.co-opt input{width:1.125rem; height:1.125rem; margin:.15rem 0 0; accent-color:var(--acc-line); cursor:pointer}
+.co-opt:has(input:checked){border-color:var(--acc-line); background:var(--acc-soft); box-shadow:0 0 0 1px var(--acc-line)}
+.co-opt:has(input:focus-visible){outline:var(--bw-focus) solid var(--acc-line); outline-offset:2px}
+@media (hover:hover){ .co-opt:hover{border-color:var(--ink)} }
+.co-opt-body{display:grid; gap:2px; min-width:0}
+.co-opt-t{font-weight:var(--w-semi); line-height:1.35}
+.co-opt-d{font-size:var(--t-sm); line-height:var(--lh-sm); color:var(--ink-2); text-wrap:pretty}
+.co-opt-p{font-size:var(--t-sm); font-weight:var(--w-semi); white-space:nowrap; line-height:1.35}
+.co-addr{display:grid; gap:var(--s3); padding-top:var(--s2)}
+.co-addr h3{margin:0; font-size:var(--t-body)}
+.co-pay{display:grid; gap:var(--s2); padding:var(--s4); background:var(--fill-2); border:1px solid var(--line); border-radius:var(--radius)}
+.co-submit{display:flex; flex-wrap:wrap; align-items:center; gap:var(--s3) var(--s5)}
+.co-submit .btn:not(.link){min-width:16rem}
+.co-err{margin:0; font-size:var(--t-sm); line-height:var(--lh-sm); font-weight:var(--w-semi); color:var(--danger)}
+.co-form .field.is-invalid .input{border-color:var(--danger); background:var(--danger-soft); box-shadow:0 0 0 1px var(--danger)}
+.co-set.is-invalid .co-opt{border-color:var(--danger)}
+#coSumBody{display:grid; gap:var(--s3)}
+.co-sum .btn.link{justify-self:start}
+@media (prefers-reduced-motion:no-preference){
+  .co-opt{transition-property:border-color, background-color, transform}
+  .co-opt:active{transform:scale(.97)}
+}
 /* ---------- wizard ---------- */
-.wsteps{display:flex; gap:var(--s2); flex-wrap:wrap; margin-bottom:var(--s5)}
-.wsteps button{display:flex; align-items:center; gap:var(--s2); background:transparent;
-  border:var(--bw-line) solid var(--line-2); padding:var(--s1) var(--s3); border-radius:var(--pill);
-  font-size:var(--t-sm); color:var(--muted)}
-.wsteps button .n{font-family:"IBM Plex Mono",monospace; font-size:var(--t-eyebrow); font-weight:var(--w-semi)}
-.wsteps button[aria-current="true"]{border-color:var(--ink); color:var(--ink); font-weight:var(--w-semi)}
-.wsteps button.done{color:var(--ink-2); border-color:var(--line-2)}
-.wlayout{display:grid; gap:var(--s5); grid-template-columns:minmax(0,1fr) minmax(280px,360px); align-items:start}
 .summary{border:0; border-radius:0; padding:0;
   align-self:stretch; background:transparent; position:static; box-shadow:none}
 .summary h4{font-size:var(--t-sm); margin-bottom:var(--s2)}
-.fu-opts{display:grid; gap:var(--s2)}
-.fu-opts > .badge{justify-self:start}
-#fulfil{display:grid; gap:var(--s3)}
-#fulfil .pick{grid-template-columns:7.25rem minmax(0,1fr); align-items:center; gap:var(--s3); padding:var(--s3) var(--s3)}
-#fulfil .fu-pic{width:7.25rem; height:5.1rem; object-fit:cover; object-position:center;
-  border-radius:var(--r-sm); background:var(--fill-2); pointer-events:none}
-#fulfil .fu-pic.is-3d{object-fit:contain; padding:var(--s1)}
-#fulfil .fu-body{display:grid; gap:var(--s1); min-width:0}
 #series:empty{display:none}
 #seriesHint[hidden], #modelHint[hidden]{display:none !important}
 .sumlist{display:grid; gap:var(--s2); font-size:var(--t-sm); margin-bottom:var(--s2)}
@@ -729,17 +901,6 @@ body:not(.notes) .anno{display:none}
 #solRange:not([hidden]), .sol-range{display:grid; gap:0; margin-top:var(--s3)}
 
 /* recap rows */
-.recap{display:grid; gap:0; border:1px solid var(--line); border-radius:var(--radius);
-  background:var(--frame); overflow:hidden; box-shadow:var(--lift)}
-.rrow{display:grid; grid-template-columns:1fr auto; gap:var(--s1) var(--s3); align-items:start;
-  padding:var(--s3) var(--s4); border:0; border-bottom:1px solid var(--line); border-radius:0;
-  background:var(--frame); box-shadow:none}
-.rrow:last-child{border-bottom:0}
-.rrow .k{grid-column:1/-1; font-family:"IBM Plex Mono",monospace; font-size:var(--t-eyebrow);
-  letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
-.rrow .v{font-size:var(--t-body); font-weight:var(--w-semi)}
-.rrow .sub{grid-column:1/-1; font-size:var(--t-sm); color:var(--ink-2)}
-.recap + .sol-panel{margin-top:var(--s3)}
 
 .solutions{display:grid; gap:var(--s2)}
 .sol{display:grid; grid-template-columns:1fr auto; gap:var(--s1) var(--s3);
@@ -800,7 +961,7 @@ tr.hl td{background:var(--acc-soft)}
   background:var(--frame); overflow:hidden; box-shadow:var(--lift)}
 .shipband-copy{padding:var(--s6) var(--s6) var(--s6)}
 #shipband{scroll-margin-top:var(--s7)}
-.shipband-copy h3{font-size:var(--t-h1); line-height:1.25; margin-bottom:var(--s3); max-width:22ch}
+.shipband-copy h2{font-size:var(--t-h1); line-height:1.25; margin-bottom:var(--s3); max-width:22ch}
 .shipband-copy ol{margin:0 0 var(--s4); padding-left:var(--s5); color:var(--ink-2); font-size:var(--t-body); line-height:1.55}
 .shipband-copy ol li{margin:var(--s1) 0}
 .shipband-copy ol li::marker{font-weight:var(--w-black); color:var(--ink)}
@@ -832,13 +993,13 @@ tr.hl td{background:var(--acc-soft)}
 .specard p{font-size:var(--t-sm); color:var(--ink-2); line-height:1.35; align-self:start}
 .specard-cta{justify-self:start; align-self:end; margin-top:var(--s1); background:var(--mint); color:var(--ink);
   border-radius:var(--pill); padding:var(--s2) var(--s3); font-size:var(--t-sm); font-weight:var(--w-bold)}
-.specard:hover .specard-cta{background:var(--head); color:var(--head-ink)}
-.specard:hover{border-color:var(--ink)}
+@media (hover:hover){ .specard:hover .specard-cta{background:var(--head); color:var(--head-ink)} }
+@media (hover:hover){ .specard:hover{border-color:var(--ink)} }
 
 .foot{display:none}
 
 /* EDITA press, spring-swift scale on :active */
-.nav button, .toggle, .navtog, .sitenav button:not(.off), .gbtn, .score, .wsteps button, .pick.chip, .coffee-check, button.logo, .pl-visit-x{
+.nav button, .toggle, .navtog, .sitenav button:not(.off), .gbtn, .score, .pick.chip, .coffee-check, button.logo{
   transition:transform var(--spring-swift-ms) var(--spring-swift),
              background-color var(--press-color), color var(--press-color),
              border-color var(--press-color), box-shadow var(--press-color)}
@@ -855,17 +1016,32 @@ button.card, .specard{
   .pick[aria-pressed="true"]:hover, .symcard[data-on="1"]:hover{
     border-color:var(--mint-ink); transform:translateY(-2px)}
 }
-.nav button:active, .toggle:active, .navtog:active, .sitenav button:not(.off):active,
-.gbtn:active, .score:active, .wsteps button:active, .pick.chip:active, .coffee-check:active, button.logo:active,
-.pl-visit-x:active{transform:scale(.92)}
+.nav button:active,
+.toggle:active,
+.navtog:active,
+.sitenav button:not(.off):active,
+.gbtn:active,
+.score:active,
+.pick.chip:active,
+.coffee-check:active,
+button.logo:active{transform:scale(.92)}
 .btn:active:not(:disabled):not(.link), .pick:not(.chip):not(.walkin):active{transform:scale(.94)}
 button.card:active, .specard:active{transform:scale(.97)}
 
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important; transition:none!important}
-  .nav button:active, .toggle:active, .navtog:active, .sitenav button:not(.off):active,
-  .gbtn:active, .score:active, .wsteps button:active, .pick.chip:active, button.logo:active,
-  .pl-visit-x:active, .btn:active, .pick:active, button.card:active, .specard:active{transform:none}
+  .nav button:active,
+.toggle:active,
+.navtog:active,
+.sitenav button:not(.off):active,
+.gbtn:active,
+.score:active,
+.pick.chip:active,
+button.logo:active,
+.btn:active,
+.pick:active,
+button.card:active,
+.specard:active{transform:none}
   .tri-field .tri{animation:none!important}
 }
 
@@ -906,11 +1082,11 @@ button.card:active, .specard:active{transform:scale(.97)}
   .sitehead.is-open .sitenav button{min-height:48px; padding:var(--s2) 0 var(--s2) 1rem; justify-content:flex-start;
     text-align:left; color:var(--ink); font-weight:var(--w-semi);
     border-bottom:1px solid var(--line); box-shadow:none}
-  .sitehead.is-open .sitenav button:hover,
   .sitehead.is-open .sitenav button[data-on]{color:var(--ink); box-shadow:inset 3px 0 0 var(--head)}
+@media (hover:hover){ .sitehead.is-open .sitenav button:hover{color:var(--ink); box-shadow:inset 3px 0 0 var(--head)} }
   body.head-mint .sitehead.is-open .sitenav button,
-  body.head-mint .sitehead.is-open .sitenav button:hover,
-  body.head-mint .sitehead.is-open .sitenav button[data-on]{color:var(--ink)}
+body.head-mint .sitehead.is-open .sitenav button[data-on]{color:var(--ink)}
+@media (hover:hover){ body.head-mint .sitehead.is-open .sitenav button:hover{color:var(--ink)} }
   .sitehead.is-open .menu-tel{display:inline-flex; align-items:center; gap:var(--s2);
     align-self:flex-start; width:auto; height:auto; min-height:0;
     margin:var(--s3) 0 var(--s2) 1rem; padding:.45rem var(--s4) .45rem var(--s3);
@@ -925,24 +1101,37 @@ button.card:active, .specard:active{transform:scale(.97)}
   .screen[data-screen="home"]{padding-bottom:var(--s5)}
   .screen[data-screen="home"] > .stack{gap:var(--s5)}
   .hero{display:flex; flex-direction:column; min-height:0; padding-block:0; overflow:visible; place-items:stretch}
-  .hero-bg, .tri-field{display:none}
   .tri-field{display:none}
+  /* mobil: podklad pod celým hero (text aj pipeline), presahuje okraje obsahu až po hranu displeja */
+  /* mobil: text je hore, svetlý stred ide za ním */
+  /* mobil: text je hore a ostáva na bielej, fialková začne až pri krokoch a pred pásom so štatistikami ubudne */
+  .hero-bg{top:calc(-1 * var(--s4)); bottom:calc(-1 * var(--s5)); -webkit-mask-image:none; mask-image:none;
+    background:linear-gradient(to bottom, rgba(244,241,252,0) 0, rgba(244,241,252,0) 40%,
+      var(--hero-wash) 56%, var(--hero-wash) 82%, rgba(244,241,252,0) 100%)}
+  .hero-bg::before{
+    -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.06) 0, rgba(0,0,0,.06) 38%, #000 56%, #000 82%, rgba(0,0,0,.15) 100%);
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.06) 0, rgba(0,0,0,.06) 38%, #000 56%, #000 82%, rgba(0,0,0,.15) 100%)}
   .hero .ring{display:none}
   .hero-mid{order:1; max-width:none; width:100%; margin-top:0; padding:0; gap:var(--s3); background:none; box-shadow:none}
   .hero-mid > .row{width:100%; max-width:none; flex-wrap:wrap; margin-top:0}
   .hero-mid p{font-size:var(--t-sm); line-height:1.4}
-  .ringnodes{order:2; position:relative; display:grid; gap:0; margin-top:var(--s4); inset:auto; overflow:visible; pointer-events:none}
+  /* pipeline ako na desktope: spojnice sú reťaz trojuholníkov (drawPipeMobile),
+     dve vstupné cesty vedľa seba, spoja sa do kroku 2, potom os s ikonami vľavo */
+  .ringnodes{order:2; position:relative; display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:0 var(--s3); margin-top:var(--s7); inset:auto; overflow:visible; pointer-events:none}
   .ringnodes > *{position:relative; width:auto; left:auto; right:auto; top:auto; bottom:auto; inset:auto}
-  .pipe{position:relative; display:grid; grid-template-columns:48px minmax(0,1fr); justify-items:stretch;
-    align-items:start; gap:var(--s2); width:100%; padding-bottom:var(--s2)}
-  .pipe::before{content:""; position:absolute; left:23px; top:40px; bottom:0; width:2px; background:var(--tri)}
-  .np6::before{display:none}
-  .pipe3d{width:40px; height:40px; justify-self:center; position:relative; z-index:1; left:auto; top:auto;
-    background:var(--paper); animation:none}
+  .ringnodes > .ring-m{display:block; position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0}
+  .pipe{position:relative; z-index:1; display:grid; grid-template-columns:48px minmax(0,1fr); justify-items:stretch;
+    align-items:center; gap:var(--s2); width:100%; grid-column:1 / -1}
+  .pipe3d{width:40px; height:40px; justify-self:center; position:relative; z-index:1; left:auto; top:auto; animation:none;
+    filter:drop-shadow(0 6px 6px rgba(119,90,197,.2)) drop-shadow(0 1px 2px rgba(119,90,197,.16))}
   .np3 .pipe3d, .np4 .pipe3d, .np5 .pipe3d{left:auto; top:auto}
-  .np2{margin-bottom:var(--s2)}
-  .np3{margin-top:var(--s3)}
-  .pipe .node{grid-column:2}
+  .np1, .np2{grid-column:auto; grid-template-columns:minmax(0,1fr); grid-template-rows:auto 1fr;
+    justify-items:center; align-items:start; gap:var(--s1)}
+  .np1 .pipe3d, .np2 .pipe3d{width:52px; height:52px}
+  .np1 .node, .np2 .node{align-self:stretch; align-items:flex-start}
+  .np3{margin-top:var(--s7)}
+  .np4, .np5, .np6{margin-top:var(--s6)}
   .revmini{height:auto; max-width:none; flex:none; margin-left:0}
   .g3{grid-template-columns:1fr}
   .screen[data-screen="home"] .g3, #cfBody .g3, .specrail, .revmini{display:flex; flex-wrap:nowrap; gap:var(--s3);
@@ -951,7 +1140,7 @@ button.card:active, .specard:active{transform:scale(.97)}
     -webkit-overflow-scrolling:touch; scrollbar-width:none}
   .screen[data-screen="home"] .g3::-webkit-scrollbar, #cfBody .g3::-webkit-scrollbar, .specrail::-webkit-scrollbar, .revmini::-webkit-scrollbar{display:none}
   .screen[data-screen="home"] .g3 > *, #cfBody .g3 > *, .specrail > *, .revmini > *{flex:0 0 46%; width:46%; max-width:46%; scroll-snap-align:start; min-width:0}
-  .specrail .specard:hover, .screen[data-screen="home"] .g3 > *:hover, #cfBody .g3 > *:hover, .revmini > *:hover{transform:none; box-shadow:none}
+  @media (hover:hover){ .specrail .specard:hover, .screen[data-screen="home"] .g3 > *:hover, #cfBody .g3 > *:hover, .revmini > *:hover{transform:none; box-shadow:none} }
   .g4{grid-template-columns:1fr 1fr}
   .usps{grid-template-columns:1fr 1fr; gap:var(--s3) var(--s2); padding:0}
   .usp{gap:var(--s1)}
@@ -959,38 +1148,33 @@ button.card:active, .specard:active{transform:scale(.97)}
   .usp-ic svg{width:20px; height:20px}
   .usp h4{font-size:var(--t-sm); line-height:1.25}
   .usp p{font-size:.8125rem; line-height:1.3}
-  .pl-layout, .wlayout, .shipband{grid-template-columns:1fr}
+  .pl-layout, .shipband{grid-template-columns:1fr}
   .pl-layout{display:flex; flex-direction:column; gap:var(--s4)}
+  /* objednávka: súhrn je celý viditeľný nad formulárom, nie zbalený */
+  .co-layout{grid-template-columns:minmax(0,1fr); gap:var(--s5)}
+  .co-main, .co-side{grid-column:1; grid-row:auto}
+  .co-main{max-width:none}
+  .co-side{position:static}
   .pl-layout > div, .pl-rail{display:contents}
   #plTitle{order:1; margin-bottom:0}
-  #solutionsBlock{order:2; width:100%; min-width:0; box-sizing:border-box}
-  .pl-ask{order:3; margin:0 0 var(--s4); font-size:var(--t-body)}
+  .pl-product{gap:var(--s4)}
+  .pl-perks{order:3; margin-bottom:var(--s3)}
+  .pl-ask{order:3; margin:0 0 var(--s2); font-size:1.125rem}
   .pl-descr{order:4; margin-bottom:var(--s4)}
   .pl-descr-head{font-size:var(--t-sm)}
   .symlist{order:5; width:100%; min-width:0}
   .pl-layout .anno{order:6}
-  .sol-panel.is-empty .sol-hero{grid-template-columns:7rem minmax(0,1fr); align-items:center; gap:var(--s4)}
-  .sol-panel.is-empty .sol-hero img{width:7rem; height:7rem; padding:var(--s2); min-height:0; aspect-ratio:auto}
-  .sol-panel.is-empty .sol-hero-name{font-size:var(--t-lg)}
+  .pl-photo{width:100%}
+  .pl-gallery{order:2; width:100%}
+  .pl-extra{order:6}
+  .pl-photo img, .pl-rail:has(.sol-panel:not(.is-empty)) .pl-photo img{max-height:15rem}
+  .pl-product .symcat-grid{--cols:2; grid-template-columns:repeat(2,minmax(0,1fr))}
   .symcat-grid{--cols:1; grid-template-columns:1fr}
   .symcard, .symmain{width:100%}
   .pl-rail, .summary{position:static}
-  #fulfil .pick{grid-template-columns:6.75rem minmax(0,1fr); align-items:stretch; gap:0; padding:0}
-  #fulfil .fu-pic, #fulfil .fu-pic.is-3d{width:100%; height:100%; min-height:100%;
-    object-fit:cover; object-position:center; border-radius:0; padding:0}
-  #fulfil .fu-body{padding:var(--s3)}
-  .rrow{padding:var(--s2) var(--s3); gap:2px var(--s2)}
-  .rrow .btn.link{min-height:0; align-self:start}
-  #recap .rrow:first-child .sub{display:none}
-  .pl-visit{flex-direction:column; align-items:stretch; gap:var(--s2);
-    padding:var(--s2) 2.75rem var(--s2) var(--s3); margin-bottom:var(--s4)}
-  .pl-visit-copy{gap:var(--s2)}
-  .pl-visit p{font-size:var(--t-sm); line-height:1.35}
-  .pl-visit-ship{padding:var(--s1) var(--s3)}
-  .pl-visit-coffee{display:none}
-  .shipband-pic{order:-1; min-height:200px}
+              .shipband-pic{order:-1; min-height:200px}
   .shipband-copy{padding:var(--s4)}
-  .shipband-copy h3{max-width:none; margin-bottom:var(--s2)}
+  .shipband-copy h2{max-width:none; margin-bottom:var(--s2)}
   .shipband-copy ol{font-size:var(--t-sm); line-height:1.4; margin-bottom:var(--s3)}
   .screen[data-screen="home"] .g3 > button.card{padding:0 0 var(--s3)}
   .screen[data-screen="home"] .g3 > button.card h4{margin:var(--s3) var(--s3) var(--s1)}
@@ -1004,14 +1188,16 @@ button.card:active, .specard:active{transform:scale(.97)}
   .gbtn{white-space:normal}
   .specard-copy{height:auto; min-height:0; grid-template-rows:auto auto auto; align-content:end}
   .specard::after{background:linear-gradient(180deg, transparent 0%, rgba(255,255,255,.16) 42%, var(--paper) 58%)}
-  .strip{width:100vw; max-width:100vw; margin-left:calc(50% - 50vw); overflow:hidden}
+  /* bez samovoľného pohybu (WCAG 2.2.2): pás sa posúva prstom, okraj ďalšej položky naznačí pokračovanie */
+  .strip{width:100vw; max-width:100vw; margin-left:calc(50% - 50vw); overflow-x:auto; overscroll-behavior-x:contain;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch}
+  .strip::-webkit-scrollbar{display:none}
   .strip-in{display:flex; flex-wrap:nowrap; width:max-content; max-width:none; gap:0;
-    padding:.55rem 0; animation:stripMarquee 22s linear infinite}
-  .strip-run, .strip-run[aria-hidden="true"]{display:flex; align-items:center; gap:var(--s6); flex:none; padding-right:var(--s6)}
+    padding:.55rem var(--screen-pad)}
+  .strip-run{display:flex; align-items:center; gap:var(--s6); flex:none}
+  .strip-run[aria-hidden="true"]{display:none}
   .strip span{white-space:nowrap}
-  .wsteps{flex-wrap:nowrap}
-  .wsteps button{flex:1 1 0; min-width:0; min-height:44px; justify-content:center}
-  .btn:not(.link){min-height:44px}
+      .btn:not(.link){min-height:44px}
   .outpage > .btn{background:none; background-image:none; border:0; box-shadow:none; overflow:visible;
     min-height:0; width:auto; padding:0; margin-top:var(--s2);
     color:var(--mint-ink); font-size:var(--t-sm); font-weight:var(--w-semi);
@@ -1033,8 +1219,25 @@ button.card:active, .specard:active{transform:scale(.97)}
 
 @media (max-width:639px){
   :root{--screen-pad:1rem}
-  .g2, .g4, .symcat-grid{grid-template-columns:1fr}
-  .symcat-grid{--cols:1}
+  /* lišta na mobile: popis a cena v riadku, tlačidlo pod nimi */
+  .plbar-in{grid-template-columns:auto minmax(0,1fr) auto; grid-template-areas:"what what total" "share go go"; gap:var(--s2) var(--s3);
+    padding-block:var(--s5) calc(var(--s5) + env(safe-area-inset-bottom,0px))}
+  .plbar-share{grid-area:share; width:48px; padding-inline:0}
+  .plbar-share-t{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+  .plbar-pic, .plbar-model, .plbar-note, .plbar-lbl{display:none}
+  .plbar-what{grid-area:what} .plbar-total{grid-area:total} .plbar-go{grid-area:go; width:100%}
+  .plbar-price{font-size:var(--t-lg)}
+  .screen[data-screen="pricelist"]:has(.plbar.is-on){padding-bottom:calc(var(--s6) + 8.5rem)}
+  html:has(.screen:not([hidden]) .plbar.is-on){scroll-padding-bottom:9rem}
+  .pl-thumb{width:48px; height:48px}
+  /* objednávka: polia pod sebou, odoslanie na celú šírku */
+  .co-grid{grid-template-columns:minmax(0,1fr)}
+  .co-submit{flex-direction:column; align-items:stretch}
+  .co-submit .btn:not(.link){width:100%; min-width:0}
+  .co-submit .btn.link{align-self:center}
+  /* medziobrazovka: cesty pod sebou, tlačidlo na plnú šírku */
+  .g2, .g4, .symcat-grid, .pl-product .symcat-grid{grid-template-columns:1fr}
+  .symcat-grid, .pl-product .symcat-grid{--cols:1}
   .screen[data-screen="home"] .g3 > *, #cfBody .g3 > *, .specrail > *, .revmini > *{flex-basis:82%; width:82%; max-width:82%}
   .usps{grid-template-columns:1fr 1fr}
   .crumb .lvl-far{display:none}
@@ -1042,12 +1245,14 @@ button.card:active, .specard:active{transform:scale(.97)}
   .hero-mid .row{flex-direction:column; align-items:stretch; width:100%}
   .hero-mid .btn{width:100%}
   .shipband-copy .btn{width:100%}
-  .walk-place{grid-template-columns:1fr}
+  .walk-place{grid-template-columns:minmax(0,1fr)}
   .walk-map, .walk-map iframe{min-height:168px}
   .walk-coffee-ico{width:44px; height:44px}
   .coffee-check{min-height:44px}
-  .pl-descr .btn, .symmore-foot .btn{width:100%; justify-self:stretch}
-  .symmore{grid-template-columns:1fr}
+  .pl-descr .btn:not(.link), .symmore-foot .btn{width:100%; justify-self:stretch}
+  .symmore, .symmore.is-free{grid-template-columns:1fr}
+  .symmore.is-free .symmore-pic{display:none}
+  .symmore.is-free .symmore-copy{border-radius:var(--radius)}
   .symmore-copy{width:auto; max-width:none; min-width:0;
     border-radius:0 0 var(--radius) var(--radius);
     background:linear-gradient(to top, var(--fill) 0%, var(--paper) 68%)}
@@ -1059,7 +1264,7 @@ button.card:active, .specard:active{transform:scale(.97)}
   #brands .pick.chip, #series .pick.chip{min-height:32px}
   #models .pick{min-height:0}
   .shipband-pic{min-height:152px}
-  .shipband-copy h3{font-size:var(--t-h2)}
+  .shipband-copy h2{font-size:var(--t-h2)}
   h1{font-size:var(--t-h1)}
   .outpage{padding:var(--s6) var(--s4) var(--s7)}
 }
@@ -1075,10 +1280,6 @@ button.card:active, .specard:active{transform:scale(.97)}
 @keyframes stripMarquee{
   from{transform:translateX(0)}
   to{transform:translateX(-50%)}
-}
-@media (max-width:899px) and (prefers-reduced-motion:reduce){
-  .strip{overflow-x:auto}
-  .strip-in{animation:none; transform:none}
 }
 
 /* ============================================================
@@ -1112,7 +1313,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
 /* ---- obrysy: čiara vnútri plochy je dekorácia, obrys ovládacieho prvku nie ---- */
 <button.card, a.card, .pick, .symcard, .pl-box, .tiers{
   border-color:var(--line-2)}
-.sep, .rrow + .rrow, .tier-row + .tier-row{border-color:var(--line)}
+.sep, .tier-row + .tier-row{border-color:var(--line)}
 
 /* ---- hierarchia tlačidiel: 1 čierne na obrazovku ---- */
 .btn{font-size:var(--t-body); font-weight:var(--w-bold); line-height:1.2}
@@ -1120,7 +1321,6 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
 .btn.link{font-size:var(--t-sm); font-weight:var(--w-semi)}
 
 </style>
-<script>document.body.classList.add("head-mint")</script>
 
 <div class="bar">
   <div class="bar-in">
@@ -1202,6 +1402,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       </div>
     </div>
 
+    <main id="main">
     <!-- ===== 1. DOMOVSKÁ ===== -->
     <div class="screen" data-screen="home">
       <div class="stack">
@@ -1247,17 +1448,18 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
           </div>
 
           <div class="ringnodes" id="ringnodes">
+            <svg class="ring-m" id="ringM" aria-hidden="true"></svg>
             <div class="pipe np1" data-w>
               <img class="pipe3d" src="itya-pipe-phone.png" alt="" width="144" height="144">
               <div class="node alt"><span class="tx">Prídeš k nám osobne<small>Vybavíme na počkanie,<br>bez rezervácie</small></span></div>
             </div>
             <div class="pipe np2" data-w>
               <img class="pipe3d" src="itya-pipe-box.png" alt="" width="144" height="144">
-              <div class="node alt"><span class="tx">Popíšeš závadu<br>a zariadenie pošleš<small>Z‑BOX alebo kuriér, zdarma</small></span></div>
+              <div class="node alt"><span class="tx">Popíšeš závadu<br>a zariadenie pošleš<small>Z‑BOX alebo kuriér, zadarmo</small></span></div>
             </div>
             <div class="pipe np3" data-w>
               <img class="pipe3d" src="itya-pipe-lupa.png" alt="" width="144" height="144">
-              <div class="node"><span class="ic">2</span><span class="tx">Zdiagnostikujeme<small>zdarma pri oprave</small></span></div>
+              <div class="node"><span class="ic">2</span><span class="tx">Zdiagnostikujeme<small>zadarmo pri oprave</small></span></div>
             </div>
             <div class="pipe np4" data-w>
               <img class="pipe3d" src="itya-pipe-euro.png" alt="" width="144" height="144">
@@ -1282,13 +1484,13 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
           <span><b>35 000+</b> opravených zariadení</span>
           <span><b>95 %</b> úspešnosť opráv</span>
           <span>Záruka <b>6–12</b> mesiacov</span>
-          <span>Diagnostika <b>zdarma</b> pri oprave</span>
+          <span>Diagnostika <b>zadarmo</b> pri oprave</span>
           </div>
           <div class="strip-run" aria-hidden="true">
           <span><b>35 000+</b> opravených zariadení</span>
           <span><b>95 %</b> úspešnosť opráv</span>
           <span>Záruka <b>6–12</b> mesiacov</span>
-          <span>Diagnostika <b>zdarma</b> pri oprave</span>
+          <span>Diagnostika <b>zadarmo</b> pri oprave</span>
           </div>
           </div>
         </div>
@@ -1319,11 +1521,11 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
           </a>
           <div class="revmini">
             <article>
-              <span class="who">Lucia M. <span class="stars">★★★★★</span></span>
+              <span class="who">Lucia M. <span class="stars" aria-hidden="true">★★★★★</span><span class="sr-only">hodnotenie 5 z 5</span></span>
               <p>„Displej na iPhone vymenili na počkanie. Za hodinu som mala telefón späť.“</p>
             </article>
             <article>
-              <span class="who">Martin H. <span class="stars">★★★★</span><span class="stars" style="opacity:.3">★</span></span>
+              <span class="who">Martin H. <span class="stars" aria-hidden="true">★★★★<span class="stars-off">★</span></span><span class="sr-only">hodnotenie 4 z 5</span></span>
               <p>„Poslal som MacBook kuriérom. Oprava rýchla, komunikácia prehľadná.“</p>
             </article>
           </div>
@@ -1332,9 +1534,9 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
         <div class="anno"><span class="label">Poznámka 02 · Cudzia pochvala platí viac než vlastná</span><p>Hodnotenie, počet recenzií, dve ukážky a odkaz priamo na Google profil.</p><p><em>Prečo:</em> Keď o sebe povieme, že sme dobrí, je to reklama. Keď to povie zákazník, je to dôkaz.</p><p><em>Podopiera to:</em> Výskum z Northwestern University: pri piatich recenziách je pravdepodobnosť nákupu výrazne vyššia než bez nich, ďalšie už veľa nepridajú, a najlepšie funguje hodnotenie medzi 4,0 a 4,7. Čistá päťka pôsobí falošne, preto je druhá ukážka štvorhviezdičková. (Pravidlo 8.)</p><p><em>Pozor:</em> Blok sa napĺňa z Google profilu automaticky. Recenzie sa nepíšu, nevyberajú ručne a neprekladajú. Ak by ich niekto vyberal, prestáva to byť dôkaz.</p><p><em>Vymyslené:</em> Mená, texty aj údaj „400+ recenzií“. ITYA dnes na webe počet neuvádza, pred spustením treba vziať skutočné číslo z Google profilu, alebo počet nepísať vôbec.</p></div>
 
         <div>
-          <h3 style="font-size:var(--t-lg); margin-bottom:var(--s2)">Čo u nás vybavíš</h3>
+          <h2 style="font-size:var(--t-lg); line-height:1.25; margin-bottom:var(--s2)">Čo u nás vybavíš</h2>
           <div class="grid g3">
-            <button class="card lead" data-channel="choose" data-go="picker"><div class="card-pic"><img src="itya-card-servis.png" alt="" width="640" height="480"></div><h4>Servis mobilov a elektroniky</h4><p>Príď do predajne na počkanie, alebo pošli zariadenie kuriérom či cez Z‑BOX. Doprava po celom Slovensku zdarma.</p></button>
+            <button class="card lead" data-channel="choose" data-go="picker"><div class="card-pic"><img src="itya-card-servis.png" alt="" width="640" height="480"></div><h4>Servis mobilov a elektroniky</h4><p>Príď do predajne na počkanie, alebo pošli zariadenie kuriérom či cez Z‑BOX. Doprava po celom Slovensku zadarmo.</p></button>
             <button class="card" data-out="repasovane"><div class="card-pic"><img src="itya-card-refurb.png" alt="" width="640" height="480"></div><h4>Repasované</h4><p>Overené zariadenia so zárukou 12 mesiacov.</p></button>
             <button class="card" data-out="vykup"><div class="card-pic"><img class="pic-buy" src="itya-card-buyback.png" alt="" width="640" height="480"></div><h4>Výkup</h4><p>Vyplatíme na mieste, alebo započítame do opravy.</p></button>
           </div>
@@ -1343,7 +1545,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
         <div class="anno"><span class="label">Poznámka 03 · Nefunkčný odkaz vyzerá ako chyba</span><p>Klikateľné je takmer všetko, tri karty služieb, päť dlaždíc špecializovaného servisu aj celé horné menu. Servis ide do toku, zvyšok na stránku, ktorá povie, že tam obsah zámerne nie je.</p><p><em>Prečo:</em> Mŕtve tlačidlo v prototype nikto neodlíši od chyby. Na stretnutí sa potom rieši ono, nie to, čo sa malo testovať.</p><p><em>Pozor:</em> Jediná výnimka je košík v hlavičke. Je zámerne neklikateľný a má to napísané v tooltipe, e-shop s repasovanými zariadeniami beží na Shopify a do tohto prototypu nepatrí.</p></div>
 
         <div class="spechead">
-          <h3 style="font-size:var(--t-lg)">Špecializovaný servis</h3>
+          <h2 style="font-size:var(--t-lg); line-height:1.25">Špecializovaný servis</h2>
           <div class="specrail">
             <button type="button" class="specard" data-out="glasschange">
               <img src="itya-spec-glass.png" alt="" width="420" height="560">
@@ -1423,7 +1625,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
                 <circle cx="17.2" cy="17.5" r="1.55" stroke="currentColor" stroke-width="1.7"/>
               </svg>
             </div>
-            <h4>Doprava tam aj späť zdarma</h4>
+            <h4>Doprava tam aj späť zadarmo</h4>
             <p>Z‑BOX alebo kuriér po Slovensku</p>
           </div>
           <div class="usp">
@@ -1440,7 +1642,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
 
         <div class="shipband">
           <div class="shipband-copy" id="shipband">
-            <h3>Zariadenie k nám pošleš zdarma kuriérom alebo cez Z‑BOX</h3>
+            <h2>Zariadenie k nám pošleš zadarmo kuriérom alebo cez Z‑BOX</h2>
             <ol>
               <li>Popíšeš závadu tvojho zariadenia.</li>
               <li>Zvolíš Z‑BOX, alebo zvoz z tvojej adresy.</li>
@@ -1470,8 +1672,9 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
           <p style="margin-top:var(--s2); color:var(--ink-2)">Napíš model alebo si ho vyber nižšie. Nič nie je predvolené.</p>
           <p class="hint" style="margin-top:var(--s1)"><span class="lede-em">Neplatíš nič dopredu. Platíš až po schválení ceny.</span></p>
         </div>
-        <div class="row" style="gap:var(--s2)">
-          <input class="input" id="q" placeholder="Napr. iPhone 13, MacBook Air M1, PS5…" style="max-width:420px" autocomplete="off">
+        <div class="field" style="max-width:420px; margin:0">
+          <label class="label" for="q">Hľadať model</label>
+          <input class="input" id="q" type="search" placeholder="Napr. iPhone 13, MacBook Air M1, PS5…" autocomplete="off">
         </div>
         <div class="anno"><span class="label">Poznámka 05 · Čo načíta JavaScript, Google nevidí</span><p>Vyhľadávanie hľadá naraz značku, sériu aj model. Pod ním je zoznam na klikanie.</p><p><em>Prečo:</em> Vyhľadávanie je rýchle pre toho, kto vie, čo má. Zoznam je to, čo prináša ľudí z Googlu. Jedno nenahradí druhé.</p><p><em>Podopiera to:</em> Overili sme si to na phone-medic.nl, ktorý sa klientovi páčil. Vyhľadávanie tam naozaj je, ale načíta sa až dodatočne. Google ho nevidí.</p><p><em>Pozor:</em> Dve veci. Prvá: nič tu nie je predvyplnené, značka, séria ani model (Pravidlo 9). Druhá: v prototype si zoznam modelov vykresľuje JavaScript, takže presne tú chybu, pred ktorou varujeme, prototyp sám robí. Naostro musia byť odkazy na modely v HTML, každý na vlastnej adrese.</p></div>
         <div><span class="label">Značka</span><div class="row" id="brands" style="margin-top:var(--s1)"></div></div>
@@ -1489,57 +1692,68 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     <div class="screen" data-screen="pricelist" hidden>
       <div class="stack">
         <div class="ctx" data-ctx></div>
-        <div class="pl-visit" id="plVisit">
-          <button type="button" class="pl-visit-x" data-visit-off aria-label="Zavrieť">&times;</button>
-          <div class="pl-visit-copy">
-            <p>Opravy nerezervujeme. <strong>Príď kedy ti to vyhovuje.</strong> Na mieste ti zariadenie zdiagnostikujeme a <strong>pri 90&nbsp;% prípadoch do pár hodín opravíme.</strong></p>
-            <div class="pl-visit-ship">
-              <p>Alebo nižšie popíš tvoj prípad a <strong>zariadenie nám na naše náklady pošli.</strong></p>
-              <svg width="19.5001" height="15.5" viewBox="0 0 19.5001 15.5" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M11.55 3.375H13.6535C13.8737 3.375 13.9837 3.375 14.0873 3.39918C14.1791 3.42061 14.2669 3.45597 14.3475 3.50394C14.4383 3.55805 14.5161 3.63372 14.6718 3.78505L18.3282 7.33995C18.4839 7.49128 18.5617 7.56695 18.6174 7.65525C18.6667 7.73354 18.7031 7.81889 18.7251 7.90817C18.75 8.00887 18.75 8.11588 18.75 8.3299V10.8125C18.75 11.2202 18.75 11.424 18.6815 11.5848C18.5901 11.7992 18.4149 11.9696 18.1944 12.0584C18.029 12.125 17.8193 12.125 17.4 12.125M12.9 12.125H11.55M11.55 12.125V3.55C11.55 2.56991 11.55 2.07986 11.3538 1.70552C11.1812 1.37623 10.9059 1.10852 10.5672 0.940739C10.1821 0.750001 9.6781 0.750001 8.67 0.750001H3.63C2.62191 0.750001 2.11786 0.750001 1.73282 0.940739C1.39413 1.10852 1.11876 1.37623 0.946189 1.70552C0.750001 2.07986 0.750001 2.56991 0.750001 3.55V10.375C0.750001 11.3415 1.55589 12.125 2.55 12.125M11.55 12.125H7.95M7.95 12.125C7.95 13.5747 6.74117 14.75 5.25 14.75C3.75883 14.75 2.55 13.5747 2.55 12.125M7.95 12.125C7.95 10.6753 6.74117 9.5 5.25 9.5C3.75883 9.5 2.55 10.6753 2.55 12.125M17.4 12.5625C17.4 13.7706 16.3926 14.75 15.15 14.75C13.9074 14.75 12.9 13.7706 12.9 12.5625C12.9 11.3544 13.9074 10.375 15.15 10.375C16.3926 10.375 17.4 11.3544 17.4 12.5625Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+        <div class="pl-layout pl-product">
+          <h1 id="plTitle">Oprava</h1>
+          <div class="pl-rail">
+          <div class="pl-gallery">
+            <figure class="pl-photo" id="solHero">
+              <img id="solHeroImg" src="itya-intake-front.png" alt="" width="1152" height="864">
+            </figure>
+            <div class="pl-thumbs" role="group" aria-label="Fotky zariadenia">
+              <button type="button" class="pl-thumb" data-photo="0" aria-label="Fotka 1 z 4: Spredu" aria-current="true"><img src="itya-intake-front.png" alt="" width="128" height="128"></button>
+              <button type="button" class="pl-thumb" data-photo="1" aria-label="Fotka 2 z 4: Zozadu"><img src="itya-intake-back.png" alt="" width="128" height="128"></button>
+              <button type="button" class="pl-thumb" data-photo="2" aria-label="Fotka 3 z 4: Detail displeja"><img src="itya-intake-close.png" alt="" width="128" height="128"></button>
+              <button type="button" class="pl-thumb" data-photo="3" aria-label="Fotka 4 z 4: Po vybalení zo zásielky"><img src="itya-intake-unbox.png" alt="" width="128" height="128"></button>
+            </div>
+            <!-- desktop: všetky fotky pod sebou (vzor iStores), mobil: veľká fotka + miniatúry -->
+            <div class="pl-stack" id="plStack">
+              <img src="itya-intake-front.png" data-alt="spredu" alt="" width="1152" height="864">
+              <img src="itya-intake-back.png" data-alt="zozadu" alt="" width="1152" height="864" loading="lazy">
+              <img src="itya-intake-close.png" data-alt="detail displeja" alt="" width="1152" height="864" loading="lazy">
+              <img src="itya-intake-unbox.png" data-alt="po vybalení zo zásielky" alt="" width="1152" height="864" loading="lazy">
             </div>
           </div>
-          <button type="button" class="pl-visit-coffee" data-go="contact" aria-label="Kde nás nájdeš">
-            <img src="itya-pipe-coffee.png" alt="" width="144" height="144">
-          </button>
-        </div>
-        <div class="pl-layout">
+          </div>
           <div>
-            <h1 id="plTitle">Oprava</h1>
-            <h3 class="pl-ask">Aké závady má tvoje zariadenie?</h3>
+            <ul class="pl-perks">
+              <li><img class="pl-perk-pic" src="itya-pipe-coffee.png" alt="" width="64" height="64"><span><strong>Bez objednania.</strong> Príď, kedy sa ti hodí.</span></li>
+              <li><img class="pl-perk-pic" src="itya-pipe-box.png" alt="" width="64" height="64"><span><strong>Alebo ho pošli.</strong> Nižšie vyber, čo sa mu stalo, a objednaj odoslanie.<span class="pl-perk-plus"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>Doprava tam aj späť zadarmo</span></span></li>
+            </ul>
+            <h2 class="pl-ask">Aké závady má tvoje zariadenie?</h2>
             <div class="pl-descr" id="descrWrap">
-              <p class="pl-descr-head">Popíš tvoj prípad vlastnými slovami alebo vyber možnosti, ktoré ho najlepšie vystihujú.</p>
-              <textarea class="input" id="descr" rows="3"
-                placeholder="Napr. spadol mi na dlažbu, displej svieti, ale dotyk v hornej tretine nereaguje. Stalo sa to včera večer."></textarea>
-              <div class="row">
-                <button type="button" class="btn sm" id="descrAdd" data-descr-add>Uložiť popis</button>
-              </div>
+              <p class="pl-descr-head">Otvor, čo sa ti stalo, a pridaj to. Môže ich byť aj viac. Ak nič nesedí, <button type="button" class="btn link" data-symfree>popíš to vlastnými slovami</button>.</p>
             </div>
             <div class="symlist" id="symptoms"></div>
-            <div class="anno"><span class="label">Poznámka 07 · Píšeme, ako hovorí zákazník</span><p>Poruchy sú napísané tým, čo sa stalo, rozdelené do skupín s obrázkom a <strong>dá sa vybrať viac naraz</strong>. Každá nesie svoje rozpätie ceny. Kliknutie kartu rozbalí a ukáže najčastejšie opravy aj tlačidlo „Zvoliť tento prípad“. Až to pridá závadu do panela. Vlastný popis je hore, stále viditeľný. „Zaznamenať požiadavku“ ho uloží pre technika, do panela sa ako položka nepridáva, lebo cenu povie až diagnostika.</p><p><em>Prečo:</em> Zákazník nevie, čo je flex napájania. Vie, že mu telefón spadol a nereaguje dotyk. Preložiť to je naša práca, nie jeho. A zariadenia prichádzajú s viac vecami naraz, prasknutý displej a unavená batéria je najbežnejšia dvojica vôbec. Predtým to tento krok nevedel opísať, hoci vzorová cenová ponuka v prototype je presne na takom prípade postavená.</p><p><em>Podopiera to:</em> Robia to všetci štyria, ktorých sme porovnávali. iSmash má priamo tlačidlo „Neviem“ a pošle človeka na platenú diagnostiku. Bez takej možnosti tí ľudia odídu bez objednávky. (Pravidlo 10.)</p><p><em>Pozor:</em> Otázka znie „Aké závady má tvoje zariadenie?“ a nie „Vyber si opravu“, je to opis zariadenia, nie košík. Preto tu nie je počítadlo ani ikona košíka a preto sa vybrané veci prenášajú ďalej ako popis pre technika, nie ako ocenené položky. Nula vybraných je legitímny stav a panel to aj hovorí.</p><p><em>Pozor:</em> Výber a čítanie sú dve oddelené veci. Klik na kartu len otvorí bublinu s najčastejšími opravami. Do panela sa prípad dostane až cez „Zvoliť tento prípad“. Zatvorenie bez zvolenia nič nepridá. Prvá verzia mala oboje na jednom kliku a to isté tlačidlo robilo raz jednu vec a raz druhú.</p><p><em>Pozor:</em> Ku ktorej kartičke panel patrí, povie strieška na vrchu bubliny. Smeruje na stred otvorenej karty, aj keď mriežka spadne na dva alebo jeden stĺpec, aj keď kartička stojí na kraji. Panel sa pritom presúva pod riadok, v ktorom kartička je, nie na koniec mriežky.</p><p><em>Pozor:</em> Riešenia v rozbalenom paneli sú <strong>alternatívy, nie postup</strong>. Odrážky pod sebou sa čítajú ako kroky opravy, preto ich úvodná veta volá najčastejšími opravami pri tomto probléme. Zákazník, ktorý si myslí, že zaplatí všetky položky naraz, odíde pri prvom pohľade na cenu.</p><p><em>Vymyslené:</em> Priradenie riešení k príznakom. Naostro ho musí prejsť technik, od toho závisí každé rozpätie na tejto obrazovke.</p></div>
-          </div>
-
-          <div class="pl-rail">
-          <aside class="sol-panel is-empty" id="solutionsBlock">
-            <div class="sol-hero" id="solHero">
-              <img id="solHeroImg" src="itya-pipe-phone.png" alt="" width="360" height="360">
-              <p class="sol-hero-name" id="solHeroName">Zariadenie</p>
-            </div>
-            <div id="solSummary">
-              <h3 class="sol-head" id="solHead">Zhrnutie tvojho prípadu</h3>
-              <div class="picked" id="pickedList"></div>
-              <div class="sol-range" id="solRange" hidden></div>
+            <div class="pl-extra">
               <div id="symCap" hidden></div>
+              <div id="refurbOffer" hidden></div>
             </div>
             <div class="anno"><span class="label">Poznámka 08 · Ceny ukazujeme, neskrývame</span><p>Rozpätie je na každej kartičke ešte pred kliknutím. Po rozbalení sú vidieť konkrétne riešenia s cenami a časmi, pri displeji aj dve úrovne panela.</p><p><em>Prečo:</em> Kto cenu nevidí, odíde. Kto ju uvidí až na konci, zaplatí, ale bude nespokojný.</p><p><em>Podopiera to:</em> Baymard: 40 % ľudí opustí košík kvôli nákladom, ktoré uvideli neskoro. Druhá štúdia porovnávala tú istú ponuku v dvoch verziách: keď sa cena odhaľovala postupne, spokojnosť nakupujúcich klesla. Pri servise je to horšie než strata objednávky, cenový šok potom, čo už človek poslal telefón, sa vráti ako zlá recenzia. (Pravidlá 1 a 2.)</p><p><em>Pozor:</em> Ako sa počíta spoločné rozpätie. Nie je to najnižšia a najvyššia cena zo všetkého, to by sumu podstrelilo, lebo kto má prasknutý displej aj mŕtvu batériu, platí za oboje. Sčítavame minimá a maximá po skupinách. Príznaky, ktoré zdieľajú tú istú opravu (prasknutý displej a nereagujúci displej sú jedna výmena), sa rátajú raz. Displej plus batéria dá 108 – 248 € a vzorová ponuka 198 € do toho sadne. Keby sme rátali inak, prototyp by sľuboval menej, než sám účtuje.</p><p><em>Pozor:</em> Tabuľka úrovní patrí pod výmenu displeja, nie pod poruchu. Predtým visela samostatne pod celým panelom a miešala dve rôzne otázky: „ktorý panel“ a „vymeniť sklo alebo celý displej“. GlassChange z nej vypadol, je to samostatná alternatíva o riadok vyššie a nemá čo robiť medzi úrovňami panela.</p><p><em>Vymyslené:</em> Ceny pri iných modeloch než iPhone 13. Tie pre iPhone 13 sú z ich skutočného cenníka. Otázka na klienta stále platí: GlassChange aj Premium OLED sú za 99 €. Ak to tak naozaj je, treba vysvetliť, prečo si vybrať ktorú, inak to vyzerá ako chyba v cenníku.</p></div>
-            <div id="refurbOffer" hidden></div>
-            <div class="plnext" id="plNext" hidden></div>
-          </aside>
+            <div class="anno"><span class="label">Poznámka 07 · Píšeme, ako hovorí zákazník</span><p>Poruchy sú napísané tým, čo sa stalo, rozdelené do skupín s obrázkom a <strong>dá sa vybrať viac naraz</strong>. Každá nesie svoje rozpätie ceny. Kliknutie kartu rozbalí a ukáže najčastejšie opravy aj tlačidlo „Pridať túto závadu“. Až to pridá závadu do panela. Vlastný popis je posledná možnosť v skupine „Iné“ a rozbalí sa ako ostatné karty, s poľom na text. „Zaznamenať požiadavku“ ho uloží pre technika, do panela sa ako položka nepridáva, lebo cenu povie až diagnostika.</p><p><em>Prečo:</em> Zákazník nevie, čo je flex napájania. Vie, že mu telefón spadol a nereaguje dotyk. Preložiť to je naša práca, nie jeho. A zariadenia prichádzajú s viac vecami naraz, prasknutý displej a unavená batéria je najbežnejšia dvojica vôbec. Predtým to tento krok nevedel opísať, hoci vzorová cenová ponuka v prototype je presne na takom prípade postavená.</p><p><em>Podopiera to:</em> Robia to všetci štyria, ktorých sme porovnávali. iSmash má priamo tlačidlo „Neviem“ a pošle človeka na platenú diagnostiku. Bez takej možnosti tí ľudia odídu bez objednávky. (Pravidlo 10.)</p><p><em>Pozor:</em> Otázka znie „Aké závady má tvoje zariadenie?“ a nie „Vyber si opravu“, je to opis zariadenia, nie košík. Preto tu nie je počítadlo ani ikona košíka a preto sa vybrané veci prenášajú ďalej ako popis pre technika, nie ako ocenené položky. Nula vybraných je legitímny stav a panel to aj hovorí.</p><p><em>Pozor:</em> Výber a čítanie sú dve oddelené veci. Klik na kartu len otvorí bublinu s najčastejšími opravami. Do panela sa závada dostane až cez „Pridať túto závadu“. Zatvorenie bez zvolenia nič nepridá. Prvá verzia mala oboje na jednom kliku a to isté tlačidlo robilo raz jednu vec a raz druhú.</p><p><em>Pozor:</em> Ku ktorej kartičke panel patrí, povie strieška na vrchu bubliny. Smeruje na stred otvorenej karty, aj keď mriežka spadne na dva alebo jeden stĺpec, aj keď kartička stojí na kraji. Panel sa pritom presúva pod riadok, v ktorom kartička je, nie na koniec mriežky.</p><p><em>Pozor:</em> Riešenia v rozbalenom paneli sú <strong>alternatívy, nie postup</strong>. Odrážky pod sebou sa čítajú ako kroky opravy, preto ich nadpis uvádza ako „Väčšinou pomôže jedna z týchto opráv“. Zákazník, ktorý si myslí, že zaplatí všetky položky naraz, odíde pri prvom pohľade na cenu.</p><p><em>Vymyslené:</em> Priradenie riešení k príznakom. Naostro ho musí prejsť technik, od toho závisí každé rozpätie na tejto obrazovke.</p></div>
           </div>
+
         </div>
 
-        <div class="anno"><span class="label">Poznámka 22 · Krok vpred musí byť vidieť</span><p>Pravý panel hovorí, čo nám zákazník povedal, a hneď pod tým, čo bude ďalej. Po zvolení prípadu je v paneli jedno tlačidlo: pokračovať na výber dopravy. Kto chce prísť osobne, ide cez lištu s ikonou kávy. Späť sa chodí cez drobečkovú navigáciu hore, nie cez tlačidlo dole.</p><p><em>Prečo:</em> Prišlo to z testovania na používateľovi. Vybral si opravu, vedel, že chce vyčistiť konektor, a nevedel, čo ďalej. Rozcestník príď-alebo-pošli bol až pod celým dvojstĺpcovým layoutom a on netušil, že tam má rolovať. Klikal preto do panela s riešeniami, lebo to bola jediná vec na obrazovke, ktorá vyzerala, že niečo urobí.</p><p><em>Podopiera to:</em> Boli to dva prejavy jednej chyby. Panel s riešeniami vyzeral ako voliteľné kartičky, hoci nebol, mal rovnaké zaoblenie, pozadie aj cenu vpravo ako skutočné tlačidlá o krok vyššie. A posledný ovládací prvok v pravom stĺpci bol „Späť“, čiže stránka čitateľovi oznámila, že skončila. Keď je krok vpred v zornom poli a panel prestane vyzerať ako ponuka, obe príčiny padajú naraz.</p><p><em>Pozor:</em> Nerozhodnutý človek mal predtým dve tlačidlá, ktoré robili inú vec (skok vs. scroll). Teraz je v paneli jedna cesta, poslať, a osobná návšteva je na lište nad nadpisom, nie schovaná pod foldom.</p><p><em>Vymyslené:</em> Nič. Ale testovaný bol jeden človek, mechanizmus sedí, početnosť nie. Po nasadení tejto zmeny treba tú istú úlohu prejsť s ďalšími dvomi či tromi ľuďmi.</p></div>
+        <div class="anno"><span class="label">Poznámka 22 · Krok vpred musí byť vidieť</span><p>Lišta dole hovorí, čo nám zákazník povedal, a hneď vedľa, čo bude ďalej. Po pridaní prvej závady sa zospodu vysunie a má jedno tlačidlo: pokračovať k objednávke. Kto chce prísť osobne, ide cez lištu s ikonou kávy. Späť sa chodí cez drobečkovú navigáciu hore, nie cez tlačidlo dole.</p><p><em>Prečo:</em> Prišlo to z testovania na používateľovi. Vybral si opravu, vedel, že chce vyčistiť konektor, a nevedel, čo ďalej. Rozcestník príď-alebo-pošli bol až pod celým dvojstĺpcovým layoutom a on netušil, že tam má rolovať. Klikal preto do panela s riešeniami, lebo to bola jediná vec na obrazovke, ktorá vyzerala, že niečo urobí.</p><p><em>Podopiera to:</em> Boli to dva prejavy jednej chyby. Panel s riešeniami vyzeral ako voliteľné kartičky, hoci nebol, mal rovnaké zaoblenie, pozadie aj cenu vpravo ako skutočné tlačidlá o krok vyššie. A posledný ovládací prvok v pravom stĺpci bol „Späť“, čiže stránka čitateľovi oznámila, že skončila. Keď je krok vpred v zornom poli a panel prestane vyzerať ako ponuka, obe príčiny padajú naraz.</p><p><em>Pozor:</em> Nerozhodnutý človek mal predtým dve tlačidlá, ktoré robili inú vec (skok vs. scroll). Teraz je v paneli jedna cesta, poslať, a osobná návšteva je na lište nad nadpisom, nie schovaná pod foldom.</p><p><em>Vymyslené:</em> Nič. Ale testovaný bol jeden človek, mechanizmus sedí, početnosť nie. Po nasadení tejto zmeny treba tú istú úlohu prejsť s ďalšími dvomi či tromi ľuďmi.</p></div>
+      </div>
+      <div class="plbar" id="plBar" role="region" aria-label="Tvoja objednávka">
+        <div class="plbar-in">
+          <img class="plbar-pic" id="plBarPic" src="itya-intake-front.png" alt="" width="96" height="72">
+          <div class="plbar-what">
+            <p class="plbar-model" id="plBarModel">Zariadenie</p>
+            <p class="plbar-items" id="plBarItems" aria-live="polite"></p>
+          </div>
+          <div class="plbar-total">
+            <p class="plbar-sum"><span class="plbar-lbl">Orientačne</span> <span class="plbar-price" id="plBarPrice" aria-live="polite"></span></p>
+            <p class="plbar-note">Presnú sumu potvrdíme po diagnostike.</p>
+          </div>
+          <button type="button" class="btn ghost plbar-share" data-share aria-label="Zdieľať výber">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+            <span class="plbar-share-t">Zdieľať</span>
+          </button>
+          <button type="button" class="btn plbar-go" data-go="fulfil">Pokračovať k objednávke</button>
+        </div>
+        <p class="plbar-status" id="plBarStatus" role="status"></p>
       </div>
     </div>
 
@@ -1547,89 +1761,121 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     <div class="screen" data-screen="fulfil" hidden>
       <div class="stack">
         <div class="ctx" data-ctx></div>
-        <div>
-          <span class="label">Doručenie</span>
-          <div class="pl-layout" style="margin-top:var(--s1)">
-          <div class="stack">
-            <div>
-              <h1>Ako to chceš vybaviť?</h1>
-              <p class="hint" style="margin-top:var(--s1); max-width:62ch">Vyber si spôsob. <span class="lede-em">Cena opravy je v oboch prípadoch rovnaká.</span></p>
-            </div>
-            <div class="fu-opts">
-              <span class="badge">Celé Slovensko</span>
-              <div id="fulfil"></div>
-            </div>
-            <p class="hint" style="margin-top:var(--s2)">Kód od telefónu väčšinou nepotrebujeme. <button class="btn link" data-go="data">Ako pracujeme s tvojimi dátami →</button></p>
-            <div class="anno"><span class="label">Poznámka 09 · Dve možnosti v rovnakom tvare</span><p>Pri každej to isté a v rovnakom poradí: čo urobí zákazník, koľko to stojí, kedy to má späť. Konkrétny dátum, nie lehota. Osobná návšteva tu nie je, tú si vybral alebo odmietol o krok skôr. Tu je len Z‑BOX a kuriér.</p><p><em>Prečo:</em> Bežná obava je, že tri možnosti človeka zmätú. Skutočný problém je opačný: že ich neuvidí a bude si myslieť, že neexistujú. Dve cesty poslania stačia, keď prísť osobne už padlo.</p><p><em>Podopiera to:</em> Baymard zistil, že polovica e-shopov nezobrazí všetky spôsoby doručenia tam, kde sa človek rozhoduje. A obava z prílišného výberu? Pochádza zo starej štúdie s džemami. Keď ju overili na 50 ďalších pokusoch, efekt vyšiel prakticky nulový. (Pravidlá 5 a 6.)</p><p><em>Pozor:</em> Hneď pod možnosťami je veta o dátach s preklikom. Je tam zámerne, toto je posledná obrazovka pred tým, než človek pustí zariadenie z ruky, a práve tu ho tá obava napadne.</p><p><em>Vymyslené:</em> Dátumy a časy. Naostro musia vychádzať z reálnej kapacity servisu, inak je z pravidla sľub, ktorý sa nedodrží.</p></div>
-          </div>
-          <div class="pl-rail">
-            <aside class="sol-panel" id="fuRecap"></aside>
-          </div>
-          </div>
+        <div class="co-head">
+          <h1>Objednávka opravy</h1>
+          <p class="hint">Kontakt a doprava na jednej stránke. <span class="lede-em">Teraz neplatíš nič.</span></p>
         </div>
-      </div>
-    </div>
-
-    <!-- ===== 5. FORMULÁR (rekapitulácia) ===== -->
-    <div class="screen" data-screen="wizard" hidden>
-      <div class="wsteps" id="wsteps">
-        <button data-step="1"><span class="n">1</span> Rekapitulácia</button>
-        <button data-step="2"><span class="n">2</span> Kontakt</button>
-      </div>
-
-      <div class="wlayout">
-        <div>
-          <!-- krok 1 -->
-          <div data-wstep="1">
-            <h1 style="margin-bottom:var(--s1)">Skontroluj, či to sedí</h1>
-            <p class="hint" style="margin-bottom:var(--s3)">Nič nevyberáš nanovo. Všetko máš z predchádzajúceho kroku. Čokoľvek sa dá zmeniť.</p>
-
-            <div class="recap" id="recap"></div>
-
-            <div class="anno"><span class="label">Poznámka 10 · To isté sa nepýtame dvakrát</span><p>Zariadenie, všetky opísané poruchy aj spôsob doručenia sú vybraté predtým. Tu je len prehľad a pri každom riadku odkaz „zmeniť“.</p><p><em>Prečo:</em> Keď sa človeka spýtame na to isté druhýkrát, nie je to potvrdenie. Je to nová príležitosť zaváhať.</p><p><em>Podopiera to:</em> Priame číslo na to nemáme a nebudeme predstierať, že áno. Nepriamo: krokované formuláre majú chybu, ktorú jednostránkové nemajú, pri kroku späť sa strácajú zadané údaje. Oprava tejto chyby priniesla až 10 % viac dokončených formulárov. (Pravidlo 3.)</p><p><em>Pozor:</em> Vpravo beží živý odhad. Nie je to košík, je to odhad, a preto je to rozpätie, nie súčet. Ak si človek opísal viac vecí, riadok sa volá „Čo všetko mu je“ a vypíše ich pod sebou. Ak si vlastný popis nepridal, riadok to povie a ponúkne doplniť. Nevyčíta mu to a nepustí ho späť na začiatok.</p></div>
-
-            <h3 style="font-size:var(--t-lg); margin:var(--s5) 0 var(--s1)">Pridať k oprave?</h3>
-            <p class="hint" style="margin-bottom:var(--s2)">Nepovinné. Robíme to pri tej istej návšteve, takže nič navyše nečakáš.</p>
-            <div class="grid g2" id="addons"></div>
-
-            <div class="anno"><span class="label">Poznámka 11 · Doplnky ponúkame až po rozhodnutí</span><p>Jediné miesto v celom toku, kde sa niečo pridáva. Štyri položky. Pri drahšej oprave v 3. kroku je ešte ponuka repasovaného kusu, tá nie je súčasťou opravy.</p><p><em>Prečo:</em> Človek je už rozhodnutý a doplnok sa urobí pri tej istej návšteve. Nič navyše nečaká.</p><p><em>Podopiera to:</em> Vzor od konkurencie, nie štúdia. Phone-Medic takto predáva doobnovenie vodotesnosti za 19 €. iSmash ponúka uprostred servisu prechod na repasované zariadenie. Koľko im to zarobí, nikde nezverejňujú.</p><p><em>Pozor:</em> V prototype sa všetky štyri doplnky ukazujú vždy rovnako, bez ohľadu na poruchu. Naostro sa musia filtrovať, leštenie displeja nemá čo ponúkať tomu, komu displej meníme. Druhá vec: „Záloha dát od 20 €“ musí byť napísaná ako služba navyše, nie ako podmienka opravy, inak si protirečí so stránkou o dátach, ktorá hovorí, že zálohu nevyžadujeme.</p><p><em>Vymyslené:</em> Ceny doplnkov aj 249 € pri repasovanom kuse.</p></div>
-          </div>
-
-          <!-- krok 2 -->
-          <div data-wstep="2" hidden>
-            <h1 style="margin-bottom:var(--s1)">Kam sa ti ozveme?</h1>
-            <p class="hint" style="margin-bottom:var(--s3)">Potrebujeme meno, e‑mail a telefón. K tomu detaily k spôsobu, ktorý si už zvolil.</p>
-            <div style="max-width:420px">
-              <div class="field"><span class="label">Meno</span><input class="input" placeholder="Jana Kováčová"></div>
-              <div class="field"><span class="label">E‑mail</span><input class="input" type="email" placeholder="jana@email.sk"></div>
-              <div class="field"><span class="label">Telefón</span><input class="input" type="tel" placeholder="+421 900 000 000">
-                <span class="hint">Voláme pred odoslaním, aby sme poradili s balením a potvrdili model.</span></div>
+        <div class="co-layout">
+          <aside class="co-side" id="coSide" aria-labelledby="coSumH">
+            <div class="sol-panel co-sum" id="coSum">
+              <h2 class="sol-head" id="coSumH">Súhrn objednávky</h2>
+              <div id="coSumBody"></div>
+              <div class="anno"><span class="label">Poznámka 10 · To isté sa nepýtame dvakrát</span><p>Zariadenie, všetky opísané poruchy aj spôsob doručenia sú vybraté predtým. Na stránke objednávky sú len v súhrne vpravo, s odkazom „Upraviť závady“.</p><p><em>Prečo:</em> Keď sa človeka spýtame na to isté druhýkrát, nie je to potvrdenie. Je to nová príležitosť zaváhať.</p><p><em>Podopiera to:</em> Priame číslo na to nemáme a nebudeme predstierať, že áno. Nepriamo: krokované formuláre majú chybu, ktorú jednostránkové nemajú, pri kroku späť sa strácajú zadané údaje. Oprava tejto chyby priniesla až 10 % viac dokončených formulárov. (Pravidlo 3.)</p><p><em>Pozor:</em> Vpravo beží živý odhad. Nie je to košík, je to odhad, a preto je to rozpätie, nie súčet. Ak si človek opísal viac vecí, riadok sa volá „Čo všetko mu je“ a vypíše ich pod sebou. Ak si vlastný popis nepridal, riadok to povie a ponúkne doplniť. Nevyčíta mu to a nepustí ho späť na začiatok.</p></div>
             </div>
-            <div class="anno"><span class="label">Poznámka 12 · Nepýtame sa na to, čo zákazník nevie</span><p>Tri kontaktné polia. Telefón je povinný a dôvod je napísaný priamo pod ním. Žiadne IMEI, sériové číslo ani dátum kúpy.</p><p><em>Prečo:</em> Človek s rozbitým telefónom v ruke tie údaje nevie zistiť. Pole, na ktoré neviem odpovedať, ma zastaví.</p><p><em>Podopiera to:</em> V jednom teste skrátili formulár z deviatich polí na šesť a konverzia klesla o 14 %. Keď namiesto toho nechali všetkých deväť a len prepísali popisky, stúpla o 19 %. Nejde teda o počet polí, ale o to, či na ne človek vie odpovedať. (Pravidlo 4.)</p><p><em>Pozor:</em> Tvrdenie, že pole na telefón zráža konverziu o 5 %, sa nedá dohľadať k žiadnej štúdii, pochádza z infografiky. Pri servise je telefonát pred odoslaním navyše normálny: MobilCare aj Počítačová pohotovosť ho robia zámerne, lebo znižuje počet zle zabalených zásielok. IMEI a stav zariadenia si zapisujeme my pri príjme, nie zákazník vopred.</p></div>
-            <div class="sep"></div>
-            <div id="branch"></div>
-            <div class="anno"><span class="label">Poznámka 13 · Formulár sa prispôsobí ceste</span><p>Spôsob doručenia je zvolený už predtým. Tu sa dopýta len to, čo daná cesta naozaj potrebuje: pri Z‑BOXe poistenie, pri kuriérovi adresa zvozu.</p><p><em>Prečo:</em> Pole, ktoré s mojou cestou nesúvisí, ma nezdrží o pár sekúnd, ale zasekne. Človek sa nad ním zastaví a rozmýšľa, či niečo nepochopil. Preto sa pri Z‑BOXe nepýtame na adresu zvozu a pri kuriérovi na výdajné miesto.</p><p><em>Podopiera to:</em> Baymard formuluje to isté pravidlo na osobnom odbere: keď si ho človek zvolí, nemá sa ho pýtať doručovacia adresa. Princíp je všeobecný, pýtaj sa len na to, čo zvolená cesta naozaj potrebuje.</p><p><em>Pozor:</em> Tri veci, ktoré vyzerajú ako detail a nie sú. Poistenie je voľba, nie pole na hodnotu, človek hodnotu nevie a číslo si vymyslí. Kam poslať zariadenie späť sa pýtame až keď je oprava hotová, nie pri objednávke. A cena za diagnostiku pri odmietnutej oprave je napísaná tu, ešte pred odoslaním objednávky.</p><p><em>Pozor:</em> Objednávka pre osobnú návštevu zámerne neexistuje. Opravy nerezervujeme, takže kto príde, príde, a krok doručenia ponúka len Z‑BOX a kuriéra. Vetva formulára aj potvrdzovacia obrazovka pre osobný odber sú v kóde pripravené, ale klikaním sa k nim nedá dostať. Ak by sa raz rezervácie zaviedli, je to jediné miesto, kde sa to zapne.</p><p><em>Vymyslené:</em> Hranica poistenia 700 €. V prototype je len preto, aby bolo vidieť tvar tej vety. Skutočnú musí potvrdiť Packeta, kým ju nemáme, na web sa žiadna suma nepíše.</p></div>
-          </div>
-        </div>
-
-        <div class="pl-rail">
-          <aside class="sol-panel" id="wizRecap">
-            <div class="sol-hero" id="wizHero">
-              <img id="wizHeroImg" src="itya-pipe-phone.png" alt="" width="360" height="360">
-              <p class="sol-hero-name" id="wizHeroName">Zariadenie</p>
-            </div>
-            <h3 class="sol-head" id="wizHead">Čo si popísal</h3>
-            <div class="picked" id="wizPicked"></div>
-            <div class="sol-range" id="wizRange"></div>
-            <div class="plnext" id="wizNext"></div>
           </aside>
+
+          <div class="co-main">
+            <form class="co-form" id="coForm" novalidate>
+              <section class="co-sec" aria-labelledby="coContactH">
+                <h2 id="coContactH">Kontakt</h2>
+                <div class="co-grid">
+                  <div class="field co-full">
+                    <label class="label" for="coName">Meno a priezvisko</label>
+                    <input class="input" id="coName" name="name" autocomplete="name" placeholder="Jana Kováčová" aria-describedby="coNameErr">
+                    <p class="co-err" id="coNameErr" hidden>Napíš meno a priezvisko.</p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="coEmail">E‑mail</label>
+                    <input class="input" id="coEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="jana@email.sk" aria-describedby="coEmailErr">
+                    <p class="co-err" id="coEmailErr" hidden>Napíš e‑mail v tvare jana@email.sk.</p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="coTel">Telefón</label>
+                    <input class="input" id="coTel" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="+421 900 000 000" aria-describedby="coTelHint coTelErr">
+                    <p class="co-err" id="coTelErr" hidden>Napíš telefónne číslo.</p>
+                  </div>
+                  <p class="hint co-full" id="coTelHint">Pred odoslaním zavoláme, poradíme s balením a potvrdíme model.</p>
+                </div>
+                <div class="anno"><span class="label">Poznámka 12 · Nepýtame sa na to, čo zákazník nevie</span><p>Tri kontaktné polia. Telefón je povinný a dôvod je napísaný priamo pod ním. Žiadne IMEI, sériové číslo ani dátum kúpy.</p><p><em>Prečo:</em> Človek s rozbitým telefónom v ruke tie údaje nevie zistiť. Pole, na ktoré neviem odpovedať, ma zastaví.</p><p><em>Podopiera to:</em> V jednom teste skrátili formulár z deviatich polí na šesť a konverzia klesla o 14 %. Keď namiesto toho nechali všetkých deväť a len prepísali popisky, stúpla o 19 %. Nejde teda o počet polí, ale o to, či na ne človek vie odpovedať. (Pravidlo 4.)</p><p><em>Pozor:</em> Tvrdenie, že pole na telefón zráža konverziu o 5 %, sa nedá dohľadať k žiadnej štúdii, pochádza z infografiky. Pri servise je telefonát pred odoslaním navyše normálny: MobilCare aj Počítačová pohotovosť ho robia zámerne, lebo znižuje počet zle zabalených zásielok. IMEI a stav zariadenia si zapisujeme my pri príjme, nie zákazník vopred.</p></div>
+              </section>
+
+              <section class="co-sec">
+                <fieldset class="co-set" id="coDelivery" aria-describedby="coDelHint coDelErr">
+                  <legend><h2>Doručenie</h2></legend>
+                  <p class="hint" id="coDelHint">Doprava tam aj späť je zadarmo. Cena opravy je v oboch prípadoch rovnaká.</p>
+                  <div class="co-opts">
+                    <label class="co-opt">
+                      <input type="radio" name="co-delivery" value="packeta">
+                      <span class="co-opt-body">
+                        <span class="co-opt-t">Z‑BOX</span>
+                        <span class="co-opt-d">Kód dostaneš e‑mailom aj SMS. Napíšeš ho na krabicu a vhodíš do ktoréhokoľvek Z‑BOXu, 24/7.</span>
+                      </span>
+                      <span class="co-opt-p">Zadarmo</span>
+                    </label>
+                    <label class="co-opt">
+                      <input type="radio" name="co-delivery" value="kurier">
+                      <span class="co-opt-body">
+                        <span class="co-opt-t">Kuriér</span>
+                        <span class="co-opt-d">Zariadenie zabalíš a kuriér si poň príde na tvoju adresu. Štítok prinesie.</span>
+                      </span>
+                      <span class="co-opt-p">Zadarmo</span>
+                    </label>
+                  </div>
+                  <p class="co-err" id="coDelErr" hidden>Vyber, ako nám zariadenie pošleš.</p>
+                </fieldset>
+
+                <div class="co-addr" id="coAddr" hidden>
+                  <h3>Kam má prísť kuriér?</h3>
+                  <div class="co-grid">
+                    <div class="field co-full">
+                      <label class="label" for="coStreet">Ulica a číslo</label>
+                      <input class="input" id="coStreet" name="street" autocomplete="street-address" placeholder="Štefánikova 12" aria-describedby="coStreetErr">
+                      <p class="co-err" id="coStreetErr" hidden>Napíš ulicu a číslo.</p>
+                    </div>
+                    <div class="field">
+                      <label class="label" for="coCity">Mesto</label>
+                      <input class="input" id="coCity" name="city" autocomplete="address-level2" placeholder="Nitra" aria-describedby="coCityErr">
+                      <p class="co-err" id="coCityErr" hidden>Napíš mesto.</p>
+                    </div>
+                    <div class="field">
+                      <label class="label" for="coZip">PSČ</label>
+                      <input class="input" id="coZip" name="zip" autocomplete="postal-code" inputmode="numeric" placeholder="949 01" aria-describedby="coZipErr">
+                      <p class="co-err" id="coZipErr" hidden>Napíš PSČ.</p>
+                    </div>
+                    <div class="field co-full">
+                      <label class="label" for="coWhen">Kedy ťa kuriér zastihne <span class="co-opt-note">(nepovinné)</span></label>
+                      <input class="input" id="coWhen" name="when" placeholder="Pracovné dni 9:00–17:00">
+                    </div>
+                  </div>
+                  <p class="hint">Spiatočná zásielka príde na rovnakú adresu.</p>
+                </div>
+
+                <p class="hint">Kód od telefónu väčšinou nepotrebujeme. <button type="button" class="btn link" data-go="data">Ako pracujeme s tvojimi dátami<span class="arr" aria-hidden="true">&nbsp;→</span></button></p>
+                <div class="anno"><span class="label">Poznámka 09 · Dve možnosti v rovnakom tvare</span><p>Pri každej to isté a v rovnakom poradí: čo urobí zákazník, koľko to stojí, kedy to má späť. Konkrétny dátum, nie lehota. Osobná návšteva tu nie je, tú si vybral alebo odmietol o krok skôr. Tu je len Z‑BOX a kuriér.</p><p><em>Prečo:</em> Bežná obava je, že tri možnosti človeka zmätú. Skutočný problém je opačný: že ich neuvidí a bude si myslieť, že neexistujú. Dve cesty poslania stačia, keď prísť osobne už padlo.</p><p><em>Podopiera to:</em> Baymard zistil, že polovica e-shopov nezobrazí všetky spôsoby doručenia tam, kde sa človek rozhoduje. A obava z prílišného výberu? Pochádza zo starej štúdie s džemami. Keď ju overili na 50 ďalších pokusoch, efekt vyšiel prakticky nulový. (Pravidlá 5 a 6.)</p><p><em>Pozor:</em> Hneď pod možnosťami je veta o dátach s preklikom. Je tam zámerne, toto je posledná obrazovka pred tým, než človek pustí zariadenie z ruky, a práve tu ho tá obava napadne.</p><p><em>Vymyslené:</em> Dátumy a časy. Naostro musia vychádzať z reálnej kapacity servisu, inak je z pravidla sľub, ktorý sa nedodrží.</p></div>
+                <div class="anno"><span class="label">Poznámka 13 · Formulár sa prispôsobí ceste</span><p>Spôsob doručenia je zvolený už predtým. Tu sa dopýta len to, čo daná cesta naozaj potrebuje: pri kuriérovi adresa zvozu, pri Z‑BOXe nič navyše.</p><p><em>Prečo:</em> Pole, ktoré s mojou cestou nesúvisí, ma nezdrží o pár sekúnd, ale zasekne. Človek sa nad ním zastaví a rozmýšľa, či niečo nepochopil. Preto sa pri Z‑BOXe nepýtame na adresu zvozu a pri kuriérovi na výdajné miesto.</p><p><em>Podopiera to:</em> Baymard formuluje to isté pravidlo na osobnom odbere: keď si ho človek zvolí, nemá sa ho pýtať doručovacia adresa. Princíp je všeobecný, pýtaj sa len na to, čo zvolená cesta naozaj potrebuje.</p><p><em>Pozor:</em> Dve veci, ktoré vyzerajú ako detail a nie sú. Kam poslať zariadenie späť sa pýtame až keď je oprava hotová, nie pri objednávke. A cena za diagnostiku pri odmietnutej oprave je napísaná tu, ešte pred odoslaním objednávky.</p><p><em>Pozor:</em> Objednávka pre osobnú návštevu zámerne neexistuje. Opravy nerezervujeme, takže kto príde, príde, a krok doručenia ponúka len Z‑BOX a kuriéra. Vetva formulára aj potvrdzovacia obrazovka pre osobný odber sú v kóde pripravené, ale klikaním sa k nim nedá dostať. Ak by sa raz rezervácie zaviedli, je to jediné miesto, kde sa to zapne.</p></div>
+              </section>
+
+              <section class="co-sec" aria-labelledby="coPayH">
+                <h2 id="coPayH">Platba</h2>
+                <div class="co-pay">
+                  <p><strong>Teraz neplatíš nič.</strong> Platíš až po diagnostike, keď schváliš cenu.</p>
+                  <p class="hint">Ak cenu odmietneš, zariadenie ti pošleme späť nezmenené a účtujeme 35 € za diagnostiku. Dopravu späť platíme my.</p>
+                </div>
+              </section>
+
+              <div class="co-submit">
+                <button type="submit" class="btn">Odoslať objednávku</button>
+                <button type="button" class="btn link" data-go="pricelist">Späť na popis závady</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- ===== 6. POTVRDENIE ===== -->
     <div class="screen" data-screen="confirm" hidden>
-      <div class="stack" style="max-width:740px">
+      <div class="stack" style="max-width:740px; margin-inline:auto">
         <div>
           <span class="label">Objednávka č. SK‑24817</span>
           <h1 style="margin-top:var(--s1)" id="cfTitle"></h1>
@@ -1638,18 +1884,12 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
 
         <div id="cfBody"></div>
 
-        <div class="anno"><span class="label">Poznámka 14 · Potvrdenie je návod, nie poďakovanie</span><p>Celá obrazovka sa mení podľa zvolenej cesty. Z‑BOX má kód a tri kroky balenia, kuriér termín zvozu.</p><p><em>Prečo:</em> Človek z tejto obrazovky musí vedieť, čo má urobiť v najbližšej hodine. Preto sú to kroky, zabaliť, označiť, vhodiť, a nie odsek textu.</p><p><em>Podopiera to:</em> Balenie je miesto, kde vzniká väčšina škôd v preprave. Všetci prevádzkovatelia, ktorých sme čítali, ho riešia aktívne, iSmash posiela krabicu s nalepeným štítkom, Comfor volá a dohodne zvoz.</p><p><em>Pozor:</em> Veta o dátach je pod krokmi, nie medzi nimi. Zálohovanie nie je úkon, ktorý od zákazníka žiadame, keby bolo krokom 1, čítalo by sa to ako povinnosť a presne opačne, než chceme.</p></div>
+        <div class="anno"><span class="label">Poznámka 14 · Potvrdenie je návod, nie poďakovanie</span><p>Celá obrazovka sa mení podľa zvolenej cesty. Z‑BOX má kód a tri kroky balenia, kuriér balenie a pokyn počkať na e‑mail s termínom zvozu.</p><p><em>Prečo:</em> Človek z tejto obrazovky musí vedieť, čo má urobiť v najbližšej hodine. Preto sú to kroky, zabaliť, označiť, vhodiť, a nie odsek textu.</p><p><em>Podopiera to:</em> Balenie je miesto, kde vzniká väčšina škôd v preprave. Všetci prevádzkovatelia, ktorých sme čítali, ho riešia aktívne, iSmash posiela krabicu s nalepeným štítkom, Comfor volá a dohodne zvoz.</p><p><em>Pozor:</em> Veta o dátach je pod krokmi, nie medzi nimi. Zálohovanie nie je úkon, ktorý od zákazníka žiadame, keby bolo krokom 1, čítalo by sa to ako povinnosť a presne opačne, než chceme.</p></div>
 
-        <div class="card acc">
-          <h4>Čo bude ďalej</h4>
-          <p style="margin-top:var(--s1)" id="cfNext"></p>
-        </div>
-
-        <div class="anno"><span class="label">Poznámka 15 · Jediný prípad, ktorý prerába</span><p>Zaplatili sme dopravu, strávili čas na stole, a zákazník cenu odmietne. Poplatok za diagnostiku sa účtuje len vtedy.</p><p><em>Prečo:</em> Nie je to spôsob, ako zarobiť. Je to spôsob, ako odradiť od zbytočných zásielok.</p><p><em>Podopiera to:</em> Robia to všetci: iSTYLE 24 € pri iPhone a 45 € pri Macu, SWISS Service 18 €, Počítačová pohotovosť 666 Kč, Alza 349 Kč. iSmash je jediný zo štyroch, kto to píše zrozumiteľne, a je to ich najlepšia veta.</p><p><em>Pozor:</em> Tá istá veta je teraz na troch miestach a v tomto poradí: v objednávke pred odoslaním, tu na potvrdení a znova pri odmietnutí ceny. Cena povedaná neskoro znižuje spokojnosť aj u ľudí, ktorí zákazku dokončili, a pri posielaní je „neskoro“ všetko po tom, čo človek pustil telefón z ruky. Pri osobnej návšteve je na tom istom mieste napísané, že diagnostika je zdarma.</p><p><em>Vymyslené:</em> Nič. 35 € je ich súčasná sadzba.</p></div>
+        <div class="anno"><span class="label">Poznámka 15 · Jediný prípad, ktorý prerába</span><p>Zaplatili sme dopravu, strávili čas na stole, a zákazník cenu odmietne. Poplatok za diagnostiku sa účtuje len vtedy.</p><p><em>Prečo:</em> Nie je to spôsob, ako zarobiť. Je to spôsob, ako odradiť od zbytočných zásielok.</p><p><em>Podopiera to:</em> Robia to všetci: iSTYLE 24 € pri iPhone a 45 € pri Macu, SWISS Service 18 €, Počítačová pohotovosť 666 Kč, Alza 349 Kč. iSmash je jediný zo štyroch, kto to píše zrozumiteľne, a je to ich najlepšia veta.</p><p><em>Pozor:</em> Tá istá veta je teraz na troch miestach a v tomto poradí: v objednávke pred odoslaním, tu na potvrdení a znova pri odmietnutí ceny. Cena povedaná neskoro znižuje spokojnosť aj u ľudí, ktorí zákazku dokončili, a pri posielaní je „neskoro“ všetko po tom, čo človek pustil telefón z ruky. Pri osobnej návšteve je na tom istom mieste napísané, že diagnostika je zadarmo.</p><p><em>Vymyslené:</em> Nič. 35 € je ich súčasná sadzba.</p></div>
 
         <div class="row">
-          <button class="btn" data-go="quote">Ďalej v prototype: prišla cenová ponuka</button>
-          <button class="btn ghost" data-go="status">Sledovať stav</button>
+          <button type="button" class="btn" data-go="home">Späť na hlavnú stránku</button>
         </div>
       </div>
     </div>
@@ -1672,14 +1912,14 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
             <tbody>
               <tr><td>Výmena displeja Premium</td><td>Soft OLED 120 Hz, záruka 12 mes.</td><td class="n">99 €</td></tr>
               <tr><td>Výmena batérie, originál</td><td>Odporúčané, nepovinné</td><td class="n">99 €</td></tr>
-              <tr><td>Doprava tam aj späť</td><td id="qShip">zdarma</td><td class="n">0 €</td></tr>
+              <tr><td>Doprava tam aj späť</td><td id="qShip">zadarmo</td><td class="n">0 €</td></tr>
               <tr class="hl"><td><strong>Spolu</strong></td><td></td><td class="n"><strong>198 €</strong></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="ph" style="height:110px">fotky zariadenia pri príjme · 4 ks</div>
-        <p class="hint" style="margin-top:var(--s2)">Fotky sme spravili pri prevzatí, aby sme mali zapísaný stav zariadenia. Do zariadenia sme nevstupovali. <button class="btn link" data-go="data">Ako pracujeme s tvojimi dátami →</button></p>
+        <p class="hint" style="margin-top:var(--s2)">Fotky sme spravili pri prevzatí, aby sme mali zapísaný stav zariadenia. Do zariadenia sme nevstupovali. <button class="btn link" data-go="data">Ako pracujeme s tvojimi dátami<span class="arr" aria-hidden="true">&nbsp;→</span></button></p>
 
         <div class="anno"><span class="label">Poznámka 16 · Fotky pri príjme</span><p>Stav zariadenia, IMEI a fotky pri prevzatí. Pod nimi je napísané, prečo sme ich robili a že do zariadenia sme nevstupovali.</p><p><em>Prečo:</em> Keď zákazník príde osobne, stav svojho telefónu vidí na vlastné oči. Keď ho pošle, nevidí nič. Bez záznamu sa spor o poškriabaný rám nedá vyhrať.</p><p><em>Pozor:</em> Fotky sú dvojsečné, sú dôkaz pre nás aj pripomienka, že niekto zariadenie držal v ruke. Preto k nim patrí veta, čo fotíme a čo nie, a prelink na stránku o dátach. Bez nej fotky obavu zvyšujú, nie znižujú.</p><p><em>Vymyslené:</em> Nič, ale nie je to funkcia webu, je to krok v prevádzke. Musí byť v procese od prvého dňa, inak ho pri prvom spore nemáme.</p></div>
 
@@ -1719,13 +1959,13 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
           <span class="label">Predajňa</span>
           <div class="contact-head-row">
             <h1>Kde nás nájdeš</h1>
-            <button class="btn ghost" data-go="home">Späť na úvod</button>
+            <button class="btn ghost" data-go="home">Späť na hlavnú stránku</button>
           </div>
         </div>
         <article class="pl-box" id="contactWalk">
           <span class="label">Prídem osobne</span>
           <h3>OC Retro</h3>
-          <p class="walk-open hint">Opravy nerezervujeme. <span class="lede-em">Príď kedy ti to vyhovuje.</span></p>
+          <p class="walk-open hint">Opravy nerezervujeme. <span class="lede-em">Príď, kedy ti to vyhovuje.</span></p>
           <div class="walk-place">
             <div>
               <p class="walk-addr"><strong>Nevädzová 6</strong>Bratislava · 1. poschodie pri Food Courte</p>
@@ -1792,7 +2032,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
                 </div>
               </div>
               <div class="field">
-                <span class="label">Na meno</span>
+                <label class="label" for="coffeeName">Na meno</label>
                 <input class="input" id="coffeeName" data-coffee-el="name" placeholder="Ján / ITYA / 0910…" autocomplete="name">
               </div>
               <p class="hint coffee-err" id="coffeeErr" data-coffee-el="err" hidden role="alert">Doplň deň, kedy prídeš, a meno na kávu.</p>
@@ -1845,10 +2085,11 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
         <h1 id="outTitle">Táto stránka</h1>
         <p>Táto stránka nie je súčasťou prototypu. Prototyp pokrýva len servis, osobne v predajni aj poslanie na opravu.</p>
         <div class="anno"><span class="label">Poznámka 19 · Zámerne prázdne</span><p>Repasované, Výkup, Pre firmy, Predajňa aj päť servisných stránok sú tu ako navigácia, nie ako obsah.</p><p><em>Prečo:</em> Nie sú prázdne preto, že sú nedôležité. Naopak.</p><p><em>Podopiera to:</em> Repasované zariadenia má na Slovensku asi 2 650 hľadaní mesačne a ITYA je na hlavných výrazoch až na 14. – 15. mieste. Výkup asi 2 800 hľadaní, pričom tri najsilnejšie výrazy sú takmer bez konkurencie. Sú to dva najlacnejšie merateľné výnosy v projekte a ani jeden nie je v zadaní.</p></div>
-        <button class="btn" data-go="home"><span class="out-back-long">Späť na úvod</span><span class="out-back-short">&lt; späť</span></button>
+        <button class="btn" data-go="home"><span class="out-back-long">Späť na hlavnú stránku</span><span class="out-back-short"><span class="arr" aria-hidden="true">&lt;&nbsp;</span>späť</span></button>
       </div>
     </div>
 
+    </main>
   </div>
 </div>
 
@@ -1866,8 +2107,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     {id:"home",      name:"Domovská",      url:"/"},
     {id:"picker",    name:"Zariadenie",    url:"/servis"},
     {id:"pricelist", name:"Čo mu je",      url:"/servis/"},
-    {id:"fulfil",    name:"Ako vybaviť",   url:"/servis/dorucenie"},
-    {id:"wizard",    name:"Objednávka",    url:"/objednavka"},
+    {id:"fulfil",    name:"Objednávka",    url:"/objednavka"},
     {id:"confirm",   name:"Potvrdenie",    url:"/objednavka/sk-24817"},
     {id:"quote",     name:"Cenová ponuka", url:"/zakazka/sk-24817/ponuka"},
     {id:"status",    name:"Stav",          url:"/zakazka/sk-24817"},
@@ -1909,7 +2149,8 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     {id:"audio",   t:"Zvuk",              img:"itya-cat-audio.png"},
     {id:"camera",  t:"Fotoaparát",        img:"itya-cat-camera.png"},
     {id:"liquid",  t:"Tekutina",          img:"itya-cat-liquid.png"},
-    {id:"system",  t:"Výkon a systém",    img:"itya-cat-system.png"}
+    {id:"system",  t:"Výkon a systém",    img:"itya-cat-system.png"},
+    {id:"other",   t:"Iné",               img:"itya-cat-other.png"}
   ];
   var SYMPTOMS = [
     {id:"crack",   cat:"display", t:"Spadol a má prasknutý displej",             d:"Sklo je prasknuté alebo vytlčené. Obraz môže aj nemusí fungovať."},
@@ -1940,14 +2181,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     {id:"wash",    sym:["water"],            n:"Ultrazvukové čistenie po obliatí",      p:"od 49 €",   d:"Čím skôr, tým vyššia šanca. Do 2 hodín."},
     {id:"board-w", sym:["water","slow"],     n:"Oprava základnej dosky",                p:"od 99 €",   d:"Ak korózia zasiahla komponenty. Mikropájkovanie, do 8 hodín."},
     {id:"sw",      sym:["slow"],             n:"Softvérová oprava systému",             p:"cca 35 €",  d:"Preinštalovanie s ponechaním dát. Do 2 hodín."},
-    {id:"diag",    sym:["other"],            n:"Diagnostika",                           p:"35 €",      d:"Pri oprave u nás zdarma. Povie presne, čo sa deje, a až potom sa rozhoduješ."}
-  ];
-
-  var ADDONS = [
-    {id:"glass-p", t:"Ochranné sklo",        p:20, d:"Nalepíme pri tej istej návšteve, bez bubliniek."},
-    {id:"backup",  t:"Záloha dát",           p:20, d:"Od 20 €. Odporúčame pri každom zásahu do dosky."},
-    {id:"clean",   t:"Technické čistenie",   p:25, d:"Konektor a slúchadlo. Väčšinou vyrieši tichý zvuk."},
-    {id:"polish",  t:"Leštenie displeja",    p:39, d:"Ak nemeníme displej, ale je poškriabaný."}
+    {id:"diag",    sym:["other"],            n:"Diagnostika",                           p:"35 €",      d:"Pri oprave u nás zadarmo. Povie presne, čo sa deje, a až potom sa rozhoduješ."}
   ];
 
   var FULFIL = [
@@ -1974,9 +2208,10 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   ];
 
   var DEFAULT = {screen:"home", step:1, brand:null, series:null, model:null,
-                 channel:null, fulfil:null, symptoms:[], open:null, descr:"", noted:false, addons:[], quote:null, insure:"standard",
-                 returnBox:null, returnOk:false, outKey:null, coffee:null, dataFrom:null, visitOff:false};
+                 channel:null, fulfil:null, symptoms:[], open:null, descr:"", noted:false, quote:null,
+                 returnBox:null, returnOk:false, outKey:null, coffee:null, dataFrom:null};
   var state = JSON.parse(JSON.stringify(DEFAULT));
+  var HOME_TITLE = document.title;
 
   function $(s,r){return (r||document).querySelector(s);}
   function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
@@ -2073,9 +2308,85 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     tog.setAttribute("aria-expanded", open ? "true" : "false");
     if(open && !was && nav) enterKids(nav);
   }
+  /* šípky v hero: ostrý trojuholník (bez zaoblenia) s prechodom (svetlo zhora) a jedným tieňom na celej skupine.
+     Statické, bez animácie. Spoločné pre desktop (drawRing) aj mobil (drawPipeMobile). */
+  var ARROW_STEP = 40;
+  /* žiadne dve šípky bližšie ako min (px), ani z rôznych ciest (spoj vstupných ciest, ohyby) */
+  function arrowFree(placed, x, y, min){
+    for(var i = 0; i < placed.length; i++){
+      if(Math.hypot(placed[i][0] - x, placed[i][1] - y) < min) return false;
+    }
+    placed.push([x, y]);
+    return true;
+  }
+  function arrowDefs(id){
+    return '<defs>'
+      + '<linearGradient id="'+id+'G" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0" stop-color="#BBA5F5"/><stop offset=".55" stop-color="#9478E0"/><stop offset="1" stop-color="#7556C8"/>'
+      + '</linearGradient>'
+      + '<filter id="'+id+'S" x="-20%" y="-20%" width="140%" height="160%">'
+      + '<feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#775AC5" flood-opacity=".3"/>'
+      + '</filter></defs>';
+  }
+  function arrowMarkup(x, y, ang, id, k){
+    var sc = k && k !== 1 ? ' scale('+k+')' : '';
+    return '<polygon points="-10,-9.5 12.5,0 -10,9.5" transform="translate('+(+x).toFixed(1)+','+(+y).toFixed(1)+') rotate('+(+ang).toFixed(1)+')'+sc+'"'
+      + ' fill="url(#'+id+'G)"/>';
+  }
+  function arrowGroup(inner, id){
+    return arrowDefs(id) + '<g filter="url(#'+id+'S)">' + inner + '</g>';
+  }
+  /* mobilná pipeline: rovnaké šípky a rozostup ako drawRing na desktope */
+  function drawPipeMobile(){
+    var wrap = $("#ringnodes"), svg = $("#ringM");
+    if(!wrap || !svg) return;
+    var wr = wrap.getBoundingClientRect();
+    if(!wr.width || !wr.height) return;
+    svg.setAttribute("viewBox", "0 0 " + wr.width + " " + wr.height);
+    function box(sel){
+      var el = wrap.querySelector(sel); if(!el) return null;
+      var r = el.getBoundingClientRect();
+      return {t:r.top - wr.top, b:r.bottom - wr.top, x:r.left - wr.left + r.width / 2};
+    }
+    var n1 = box(".np1 .node"), n2 = box(".np2 .node");
+    var ic = [".np3", ".np4", ".np5", ".np6"].map(function(s){ return box(s + " .pipe3d"); });
+    if(!n1 || !n2 || ic.some(function(b){ return !b; })) return;
+    var ax = ic[0].x, gap = 4;
+    var forkB = Math.max(n1.b, n2.b);
+    var midY = forkB + (ic[0].t - forkB) / 2;
+    var lines = [
+      [[n1.x, n1.b + gap], [n1.x, midY], [ax, midY], [ax, ic[0].t - gap]],
+      [[n2.x, n2.b + gap], [n2.x, midY], [n1.x + 8, midY]]
+    ];
+    for(var i = 0; i < ic.length - 1; i++) lines.push([[ax, ic[i].b + gap], [ax, ic[i + 1].t - gap]]);
+    /* mobil: menšie šípky (70 %), rozostup ~26 px, žiadne dve bližšie ako 19 px */
+    var step = 26, out = "", placedM = [];
+    lines.forEach(function(pts){
+      /* šípky rozložené rovnomerne po celej dĺžke, hustota ~22 px ako na desktope */
+      var total = 0;
+      for(var t = 0; t < pts.length - 1; t++){
+        total += Math.hypot(pts[t + 1][0] - pts[t][0], pts[t + 1][1] - pts[t][1]);
+      }
+      var count = Math.max(1, Math.round(total / step));
+      var gapLen = total / count;
+      var s = gapLen / 2;
+      for(var k = 0; k < pts.length - 1; k++){
+        var a = pts[k], b = pts[k + 1];
+        var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy);
+        if(!len) continue;
+        var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+        for(; s < len; s += gapLen){
+          var x = a[0] + dx * s / len, y = a[1] + dy * s / len;
+          if(arrowFree(placedM, x, y, 19)) out += arrowMarkup(x, y, ang, "arrM", .7);
+        }
+        s -= len;
+      }
+    });
+    svg.innerHTML = arrowGroup(out, "arrM");
+  }
   function drawRing(){
     var hero = $("#hero"), svg = $("#ring");
-    if(window.matchMedia("(max-width:899px)").matches) return;
+    if(window.matchMedia("(max-width:899px)").matches){ drawPipeMobile(); return; }
     if(!hero || !svg || getComputedStyle(svg).display === "none") return;
     var hr = hero.getBoundingClientRect();
     function cardBox(el){
@@ -2142,7 +2453,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       var img = el.querySelector(".pipe3d");
       if(!img) return null;
       var r = img.getBoundingClientRect();
-      return {l:r.left-hr.left-10, r:r.right-hr.left+10, t:r.top-hr.top-10, b:r.bottom-hr.top+10};
+      return {l:r.left-hr.left-14, r:r.right-hr.left+14, t:r.top-hr.top-14, b:r.bottom-hr.top+14};
     }
     var nodes = [a,b,p3,p4,p5,p6];
     var avoid = nodes.concat([n1,n2,n3,n4,n5,n6].map(iconBox).filter(Boolean));
@@ -2212,8 +2523,8 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       '<path class="ring-path" fill="none" stroke="none" d="'+forkB+'"/>' +
       '<path class="ring-path" fill="none" stroke="none" d="'+to3+'"/>' +
       hops.map(function(d){ return '<path class="ring-path" fill="none" stroke="none" d="'+d+'"/>'; }).join("");
-    var step = 22;
-    var arrows = "";
+    var step = ARROW_STEP;
+    var arrows = "", placedD = [];
     var paths = svg.querySelectorAll(".ring-path");
     for(var i = 0; i < paths.length; i++){
       var path = paths[i];
@@ -2227,12 +2538,12 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
           var box = avoid[k];
           if(p.x > box.l && p.x < box.r && p.y > box.t && p.y < box.b){ hit = true; break; }
         }
-        if(hit) continue;
+        if(hit || !arrowFree(placedD, p.x, p.y, 30)) continue;
         var ang = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
-        arrows += '<polygon points="-6,-4.5 8,0 -6,4.5" transform="translate('+p.x+','+p.y+') rotate('+ang+')" fill="var(--tri-deep)"/>';
+        arrows += arrowMarkup(p.x, p.y, ang, "arrD");
       }
     }
-    svg.innerHTML += arrows;
+    svg.innerHTML += arrowGroup(arrows, "arrD");
   }
 
   /* ---------- context ---------- */
@@ -2256,7 +2567,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(window.matchMedia("(max-width:899px)").matches){
       var back = crumbBack();
       return back
-        ? '<span class="crumb crumb-back"><button type="button" class="lvl" data-go="'+back+'">&lt; Späť</button></span>'
+        ? '<span class="crumb crumb-back"><button type="button" class="lvl" data-go="'+back+'"><span class="arr" aria-hidden="true">&lt;&nbsp;</span>Späť</button></span>'
         : "";
     }
     var trail = [{t:"Domov", go:"home", far:true}];
@@ -2270,7 +2581,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       trail.push({t:"Servis", go:"picker", far:true});
       trail.push({t:state.model || "Zariadenie", go:"picker", far:true});
       trail.push({t:"Čo mu je", go:"pricelist"});
-      trail.push({t:"Doručenie", here:true});
+      trail.push({t:"Objednávka", here:true});
     } else {
       return "";
     }
@@ -2285,7 +2596,8 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   /* káva sa vykresľuje až so 3. krokom, čip v hlavičke beží od načítania,
      bez reštartu by boli fázovo posunuté. Reštartujeme obe naraz. */
   function syncBreath(){
-    var els = [$(".headpin"), $(".pl-visit-coffee img")].filter(Boolean);
+    var els = [$(".headpin")].concat(Array.prototype.slice.call(
+      document.querySelectorAll('.screen:not([hidden]) .visit-breathe'))).filter(Boolean);
     if(els.length < 2) return;
     els.forEach(function(el){ el.style.animation = "none"; });
     void document.body.offsetWidth;
@@ -2415,31 +2727,51 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   }
 
   /* ---------- pricelist ---------- */
-  var SOL_TIERS = '<details class="tiers"><summary>Dve úrovne panela, 99 € alebo 149 €</summary><p class="hint" style="margin:var(--s1) 0 var(--s1)">Rozdiel je v paneli, nie v práci. Záruka 12 mesiacov na obe.</p><div class="tier-list"><div class="tier-row hl"><span class="n">Premium <span class="badge">najčastejšia</span></span><span class="p">99 €</span><span class="d">Soft OLED 120 Hz · do 2 h</span></div><div class="tier-row"><span class="n">Originál Apple</span><span class="p">149 €</span><span class="d">OLED, originálny diel · do 2 h</span></div></div><p class="hint" style="margin-top:var(--s1)">Pri neoriginálnom diele môže iOS zobraziť hlášku o neznámej súčiastke.</p></details>';
+  /* úrovne panela priamo pod „Výmenou displeja“: vysvetľujú rozpätie ceny, preto nie sú schované */
+  var SOL_TIERS = '<div class="tiers-inline"><ul class="tier-list" aria-label="Úrovne panela"><li class="tier-row"><span class="n">Premium <span class="badge">najčastejšia</span></span><span class="p">99 €</span><span class="d">Soft OLED 120 Hz</span></li><li class="tier-row"><span class="n">Originál</span><span class="p">149 €</span><span class="d">Diel od výrobcu zariadenia</span></li></ul><p class="tier-note">Rozdiel je v paneli, nie v práci. Záruka 12 mesiacov na obe. Pri neoriginálnom diele môže zariadenie zobraziť hlášku o neznámej súčiastke.</p></div>';
   function solAltsHtml(id){
     var sols = solsForSym(id);
     if(!sols.length) return "";
     var parts = [];
     sols.forEach(function(x){
-      parts.push('<div class="solalt"><span class="n">'+esc(x.n)+' <em>'+esc(x.p)+'</em></span>'
+      /* pri oprave s úrovňami nesú cenu až úrovne, rozpätie by ich len zopakovalo */
+      var price = x.id === "disp" ? "" : ' <em>'+esc(x.p)+'</em>';
+      parts.push('<li class="solalt"><span class="n">'+esc(x.n)+price+'</span>'
         + '<span class="d">'+esc(x.d)+'</span>'
         + (x.id === "disp" ? SOL_TIERS : "")
-        + '</div>');
+        + '</li>');
     });
-    return '<div class="solalts">'+parts.join("")+'</div>';
+    return '<ul class="solalts">'+parts.join("")+'</ul>';
+  }
+  function symFreeHtml(){
+    var saved = !!(state.noted && state.descr);
+    return '<div class="symmore-copy is-free">'
+      +   '<label class="lead" for="descr">Popíš, čo sa stalo</label>'
+      +   '<textarea class="input" id="descr" rows="4" aria-describedby="descrNote" placeholder="Napr. spadol mi na dlažbu, displej svieti, ale dotyk v hornej tretine nereaguje.">'+esc(state.descr || "")+'</textarea>'
+      +   '<p class="symmore-note" id="descrNote">Cenu povie až diagnostika.</p>'
+      +   '<div class="symmore-foot">'
+      +     '<button type="button" class="btn" data-descr-add>'+(saved ? "Uložiť zmeny" : "Pridať popis")+'</button>'
+      +     (saved ? '<button type="button" class="btn ghost" data-noteoff>Odobrať</button>' : '')
+      +   '</div>'
+      + '</div>';
   }
   function symMoreHtml(id, col){
-    var n = solsForSym(id).length;
-    var lead;
-    if(n > 1){
-      lead = "Najčastejšie opravy pri tomto probléme. <span class=\"lede-em\">Presnú opravu potvrdíme po diagnostike.</span>";
-    } else {
-      lead = "Najčastejšia oprava pri tomto probléme. <span class=\"lede-em\">Presnú opravu potvrdíme po diagnostike.</span>";
+    if(id === "other"){
+      var saved = !!(state.noted && state.descr);
+      return '<div class="symmore is-free'+(saved ? " is-on" : "")+'" data-more="other" style="--col:'+(col||0)+'">'
+        + '<span class="symmore-join" aria-hidden="true"></span>'
+        + symFreeHtml()
+        + '<div class="symmore-pic"><img src="itya-cat-other.png" alt="" width="640" height="480"></div>'
+        + '</div>';
     }
+    /* nadpis hovorí, že ide o alternatívy (nie kroky); výhrada až pod zoznamom ako tichá poznámka */
+    var n = solsForSym(id).length;
+    var lead = n > 1 ? "Väčšinou pomôže jedna z týchto opráv" : "Väčšinou pomôže táto oprava";
+    var note = n > 1 ? "Ktorá oprava to bude, zistíme pri diagnostike." : "Či to bude táto oprava, zistíme pri diagnostike.";
     var chosen = hasSym(id);
     var cta = chosen
       ? '<button type="button" class="btn ghost" data-symdrop="'+id+'">Odobrať</button>'
-      : '<button type="button" class="btn" data-symchoose="'+id+'">Zvoliť tento prípad</button>';
+      : '<button type="button" class="btn" data-symchoose="'+id+'">Pridať túto závadu</button>';
     var sy = SYMPTOMS.filter(function(s){ return s.id === id; })[0];
     var cat = sy && SYMP_CATS.filter(function(c){ return c.id === sy.cat; })[0];
     var pic = (cat && cat.img)
@@ -2448,8 +2780,9 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     return '<div class="symmore'+(chosen ? " is-on" : "")+'" data-more="'+id+'" style="--col:'+(col||0)+'">'
       + '<span class="symmore-join" aria-hidden="true"></span>'
       + '<div class="symmore-copy">'
-      +   '<p class="lead">'+lead+'</p>'
+      +   '<h4 class="lead">'+lead+'</h4>'
       +   solAltsHtml(id)
+      +   '<p class="symmore-note"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.75" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.25v4M8 4.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>'+note+'</span></p>'
       +   '<div class="symmore-foot">'+cta+'</div>'
       + '</div>'
       + pic
@@ -2458,7 +2791,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   function symCols(){
     if(window.matchMedia("(max-width:639px)").matches) return 1;
     if(window.matchMedia("(max-width:899px)").matches) return 2;
-    return 3;
+    return 1; /* desktop: úzky stĺpec vedľa fotky, možnosti pod sebou */
   }
   function positionTail(){
     var more = document.querySelector(".symmore");
@@ -2476,7 +2809,66 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(last && last.nextSibling !== more) grid.insertBefore(more, last.nextSibling);
     more.style.setProperty("--col", String(idx % cols));
   }
+  /* plynulé zmeny v zozname závad (ako značka → model v predchádzajúcom kroku):
+     bublina sa rozbalí výškou + obsah nabehne postupne, zatvorená bublina sa zbalí,
+     karta pri pridaní/odobratí plynule zmení farbu. Pri obmedzenom pohybe všetko hneď. */
+  var SYM_EASE = "cubic-bezier(0.4, 0, 0.22, 1)";
+  function symSnapshot(){
+    var host = $("#symptoms");
+    if(!host || !host.offsetParent || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return null;
+    var cards = {};
+    host.querySelectorAll(".symcard").forEach(function(c){
+      var cs = getComputedStyle(c);
+      cards[c.getAttribute("data-for")] = {bg:cs.backgroundColor, bd:cs.borderColor};
+    });
+    var box = host.querySelector(".symmore:not(.symmore-ghost)");
+    var prevCard = box && box.previousElementSibling;
+    while(prevCard && !prevCard.classList.contains("symcard")) prevCard = prevCard.previousElementSibling;
+    return {cards:cards, box: box ? {id:box.getAttribute("data-more"), html:box.outerHTML, h:box.offsetHeight,
+      after: prevCard ? prevCard.getAttribute("data-for") : null} : null};
+  }
+  function symAnimate(snap){
+    if(!snap || !Element.prototype.animate) return;
+    var host = $("#symptoms");
+    host.querySelectorAll(".symcard").forEach(function(c){
+      var o = snap.cards[c.getAttribute("data-for")]; if(!o) return;
+      var cs = getComputedStyle(c);
+      if(o.bg === cs.backgroundColor && o.bd === cs.borderColor) return;
+      c.animate([{backgroundColor:o.bg, borderColor:o.bd}, {backgroundColor:cs.backgroundColor, borderColor:cs.borderColor}],
+        {duration:220, easing:"ease-out"});
+    });
+    var nb = host.querySelector(".symmore");
+    var nbId = nb ? nb.getAttribute("data-more") : null;
+    if(snap.box && snap.box.id !== nbId){
+      /* zatvorená bublina: jej kópia (neaktívna, skrytá pre čítačku) sa zbalí a zmizne */
+      var ref = snap.box.after && host.querySelector('.symcard[data-for="'+snap.box.after+'"]');
+      if(ref){
+        if(ref.nextElementSibling && ref.nextElementSibling.classList.contains("symmore")) ref = ref.nextElementSibling;
+        var tmp = document.createElement("div"); tmp.innerHTML = snap.box.html;
+        var g = tmp.firstElementChild;
+        g.classList.add("symmore-ghost"); g.removeAttribute("data-more");
+        g.setAttribute("aria-hidden", "true"); g.inert = true;
+        g.querySelectorAll("[id]").forEach(function(e){ e.removeAttribute("id"); });
+        ref.after(g);
+        var mt = getComputedStyle(g).marginTop;
+        /* medzera mriežky za kópiou sa zbalí s ňou, aby obsah na konci neposkočil */
+        var gap = g.nextElementSibling ? "-" + getComputedStyle(g.parentElement).rowGap : "0px";
+        var a = g.animate([{height:snap.box.h + "px", opacity:1, marginTop:mt, marginBottom:"0px"},
+          {height:"0px", opacity:0, marginTop:"0px", marginBottom:gap}],
+          {duration:220, easing:SYM_EASE, fill:"forwards"});
+        a.onfinish = a.oncancel = function(){ g.remove(); };
+      }
+    }
+    if(nb && (!snap.box || snap.box.id !== nbId)){
+      /* nová bublina: narastie z nulovej výšky */
+      var h = nb.offsetHeight;
+      nb.setAttribute("data-full-h", h);  /* konečná výška pre autoscroll (revealExpand), kým bublina rastie */
+      var ga = nb.animate([{height:"0px", opacity:0}, {height:h + "px", opacity:1}], {duration:320, easing:SYM_EASE});
+      ga.finished.then(function(){ ga.cancel(); }, function(){});
+    }
+  }
   function renderSymptoms(holdOpen){
+    var snap = symSnapshot();
     var cols = symCols();
     $("#symptoms").innerHTML = SYMP_CATS.map(function(cat){
       var items = SYMPTOMS.filter(function(s){ return s.cat === cat.id; });
@@ -2486,7 +2878,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       var cards = "";
       items.forEach(function(s, i){
         var r = s.id === "other" ? null : rangeOfSym(s.id);
-        var on = hasSym(s.id);
+        var on = hasSym(s.id) || (s.id === "other" && !!(state.noted && state.descr));
         var price = r ? formatRange(r.lo, r.hi) : "";
         var isOpen = state.open === s.id;
         var paintOpen = s.id === holdOpen;
@@ -2504,9 +2896,10 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
         }
       });
       return '<section class="symcat">'
-        + '<div class="symcat-head"><div class="ph symcat-ph"><img src="'+esc(cat.img)+'" alt="" width="52" height="52"></div><h4>'+esc(cat.t)+'</h4></div>'
+        + '<div class="symcat-head"><div class="ph symcat-ph"><img src="'+esc(cat.img)+'" alt="" width="52" height="52"></div><h3>'+esc(cat.t)+'</h3></div>'
         + '<div class="symcat-grid">'+cards+'</div></section>';
     }).join("");
+    symAnimate(snap);
   }
   function solNums(){ return numsOf(solsFor()); }
   function formatRange(lo, hi){
@@ -2530,11 +2923,12 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       + (x || "<span></span>")
       + "</div>";
   }
-  function pickrowX(attr, label){
+  function pickrowXFn(attr, label){
     return '<button type="button" class="x" '+attr+' aria-label="'+esc(label)+'" title="Odobrať">&times;</button>';
   }
   function pickedHtml(opts){
     opts = opts || {};
+    var pickrowX = opts.readonly ? function(){ return ""; } : pickrowXFn;
     var rows = symList().filter(function(sy){ return sy.id !== "other"; });
     var html = rows.map(function(sy){
       var r = rangeOfSym(sy.id);
@@ -2544,12 +2938,6 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(state.noted && state.descr){
       html += pickrowHtml("„"+esc(state.descr)+"“", "podľa diagnostiky",
         pickrowX("data-noteoff", "Odobrať popis"));
-    }
-    if(opts.addons){
-      ADDONS.filter(function(a){ return state.addons.indexOf(a.id) > -1; }).forEach(function(a){
-        html += pickrowHtml(esc(a.t), a.p+" €",
-          pickrowX('data-addonoff="'+a.id+'"', "Odobrať: "+a.t));
-      });
     }
     if(opts.fulfil){
       var f = state.fulfil ? fulfilOf(state.fulfil) : null;
@@ -2564,30 +2952,22 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     }
     return html;
   }
-  function addonTotal(){
-    return ADDONS.filter(function(a){ return state.addons.indexOf(a.id) > -1; })
-      .reduce(function(s,a){ return s + a.p; }, 0);
-  }
   function solRangeHtml(opts){
     opts = opts || {};
     var r = totalRange();
-    var add = opts.addons ? addonTotal() : 0;
-    var diag = '<p class="hint"><span class="lede-em">Presnú sumu potvrdíme po diagnostike.</span> '
-      + "Neplatíš nič dopredu. Platíš až po schválení ceny.</p>";
+    var diag = '<p class="hint"><span class="lede-em">Presnú sumu potvrdíme po diagnostike.</span>'
+      + (opts.short ? "" : " Neplatíš nič dopredu. Platíš až po schválení ceny.") + "</p>";
     if(opts.fee){
       diag += '<p class="hint">Ak po diagnostike cenu odmietneš, zariadenie ti pošleme späť nezmenené. '
         + '<span class="lede-em">Účtujeme 35 € za diagnostiku, dopravu späť platíme my.</span></p>';
     }
     if(!r){
-      if(add){
-        return '<div class="total"><span>Orientačne</span><em>'+add+" €</em></div>"+diag;
-      }
       if(hasAsk()) return diag;
       return "";
     }
     var many = symClusters().filter(function(g){ return numsOf(solsForSym(g[0])).length; }).length > 1;
     return '<div class="total"><span>'+(many ? "Spolu orientačne" : "Orientačne")+'</span><em>'
-      + formatRange(r.lo+add, r.hi+add) + "</em></div>"
+      + formatRange(r.lo, r.hi) + "</em></div>"
       + (many ? '<p class="hint">Rátame s tým, že sa robí všetko naraz. Čo je naozaj treba, povie diagnostika.</p>' : "")
       + diag;
   }
@@ -2615,48 +2995,11 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   function plNextHtml(){
     if(!hasAsk()) return "";
     return '<span class="label">Ďalej</span>'
-      + '<p class="hint">Z‑BOX alebo kuriér. <strong>Doprava tam aj späť je zadarmo.</strong></p>'
-      + '<button type="button" class="btn" data-go="fulfil" style="width:100%">Pokračovať na výber dopravy</button>';
+      + '<p class="hint">Kontakt a doprava na jednej stránke. <strong>Doprava tam aj späť je zadarmo.</strong></p>'
+      + '<button type="button" class="btn" data-go="fulfil" style="width:100%">Pokračovať k objednávke</button>';
   }
-  function fuNextHtml(){
-    var picked = state.fulfil === "packeta" || state.fulfil === "kurier";
-    return '<span class="label">Ďalej</span>'
-      + '<p class="hint">Skontroluješ zadané a doplníš kontakt.</p>'
-      + '<button type="button" class="btn" id="fulfilNext" data-go="wizard"'+(picked ? "" : " disabled")+'>Pokračovať v objednávke</button>'
-      + '<button type="button" class="btn ghost" data-go="pricelist">Späť</button>';
-  }
-  function wizNextHtml(){
-    var back = state.step === 2
-      ? '<button type="button" class="btn ghost" data-wgo="1">Späť</button>'
-      : '<button type="button" class="btn ghost" data-go="fulfil">Späť</button>';
-    if(state.step === 2){
-      var hints = "";
-      if(state.fulfil === "packeta"){
-        hints += '<p class="hint">Kód na odoslanie dostaneš e‑mailom aj SMS. Zásielku vhodíš do ktoréhokoľvek Z‑BOXu.</p>';
-      } else if(state.fulfil === "kurier"){
-        hints += '<p class="hint">Po odoslaní ti napíšeme termín zvozu. Kuriér prinesie štítok.</p>';
-      }
-      return '<span class="label">Ďalej</span>'
-        + hints
-        + '<button type="button" class="btn" data-go="confirm">Odoslať objednávku</button>'
-        + back;
-    }
-    return '<span class="label">Ďalej</span>'
-      + '<p class="hint">Meno, e‑mail a telefón.</p>'
-      + '<button type="button" class="btn" data-wgo="2">Pokračovať</button>'
-      + back;
-  }
-  function paintWizNext(){
-    var el = $("#wizNext");
-    if(!el) return;
-    var html = wizNextHtml();
-    el.innerHTML = html;
-    el.hidden = !html;
-  }
+  /* repas ako alternatíva je viditeľný vždy, aj pred výberom závady (nezávisí od ceny opravy) */
   function refurbHtml(){
-    if(!symCount()) return "";
-    var nums = solNums();
-    if(!nums.length || Math.max.apply(null, nums) < 99) return "";
     return '<span class="label">Alebo namiesto opravy</span>'
       + '<button type="button" class="card" data-out="repasovane">'
       + '<img class="refurb-pic" src="itya-pipe-phone.png" alt="" width="144" height="144">'
@@ -2674,32 +3017,87 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(on) state.open = null;
     else if(state.open === id) state.open = null;
     renderSymptoms(); renderSolutions(); renderSummary();
-    if(state.screen === "fulfil") renderFulfilStep();
+    if(state.screen === "pricelist" && id !== "other") focusSym(id);
     if(on) afterSym(id);
   }
   function afterSym(id){
     if(id === "other"){ var d = $("#descr"); if(d) d.focus(); }
-    else revealSolutions();
-    var picked = $("#pickedList"); if(picked) enterKids(picked);
-    var nx = $("#plNext"); if(nx && !nx.hidden) enterKids(nx);
-    var refurb = $("#refurbOffer"); if(refurb && !refurb.hidden) enterKids(refurb);
   }
+  /* jemný posun stránky: rovnaká krivka ako nástupné animácie (0.4, 0, 0.22, 1), dĺžka podľa vzdialenosti (350 – 700 ms).
+     Natívne „smooth“ má v každom prehliadači iné tempo, toto sedí so zvyškom webu.
+     Pri obmedzenom pohybe skočí hneď; keď používateľ sám scrolluje, animácia ho nechá tak. */
+  var softScrollRun = 0;
+  function bezier(x1, y1, x2, y2){
+    function at(a1, a2, t){ return ((1 - 3*a2 + 3*a1)*t + (3*a2 - 6*a1))*t*t + 3*a1*t; }
+    return function(x){
+      if(x <= 0) return 0; if(x >= 1) return 1;
+      var lo = 0, hi = 1, t = x;
+      for(var i = 0; i < 20; i++){ t = (lo + hi) / 2; if(at(x1, x2, t) < x) lo = t; else hi = t; }
+      return at(y1, y2, t);
+    };
+  }
+  var easeSoft = bezier(0.4, 0, 0.22, 1);
+  function softScrollTo(y){
+    /* cieľ sa neorezáva na aktuálnu výšku stránky: obsah (napr. rastúca bublina) môže ešte pribúdať,
+       koniec stránky aj tak ustráži prehliadač */
+    var to = Math.max(0, Math.round(y));
+    var from = window.scrollY, dist = to - from;
+    if(Math.abs(dist) < 2) return;
+    var run = ++softScrollRun;
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){ window.scrollTo(0, to); return; }
+    var dur = Math.min(700, Math.max(350, 250 + Math.abs(dist) * 0.35));
+    var start = null;
+    function stop(){ softScrollRun++; off(); }
+    function off(){ ["wheel", "touchstart", "keydown"].forEach(function(ev){ window.removeEventListener(ev, stop); }); }
+    ["wheel", "touchstart", "keydown"].forEach(function(ev){ window.addEventListener(ev, stop, {passive:true, once:true}); });
+    requestAnimationFrame(function step(now){
+      if(run !== softScrollRun){ off(); return; }
+      if(start === null) start = now;
+      var p = Math.min(1, (now - start) / dur);
+      window.scrollTo(0, from + dist * easeSoft(p));
+      if(p < 1) requestAnimationFrame(step); else off();
+    });
+  }
+  /* posun tak, aby prvok stál v strede viditeľnej plochy (napr. prvé chybné pole formulára) */
+  function softScrollToCenter(el){
+    if(!el) return;
+    var r = el.getBoundingClientRect();
+    softScrollTo(window.scrollY + r.top + r.height / 2 - window.innerHeight / 2);
+  }
+
+  /* po rozbalení posunie stránku tak, aby bol vidieť celý box aj s tlačidlom:
+     počíta s hornou lištou (sticky) aj so spodnou lištou výberu (fixed); keď sa box nezmestí, ukáže jeho začiatok */
   function revealExpand(el){
     if(!el || el.hidden) return;
-    requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
       if(!el.isConnected || el.hidden || el.closest("[hidden]")) return;
       var gap = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-      var extra = el.getBoundingClientRect().bottom + gap - window.innerHeight;
-      if(extra <= 0) return;
-      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      window.scrollBy({top: extra, behavior: reduce ? "auto" : "smooth"});
-    });
+      var head = document.querySelector(".bar");
+      var topLimit = (head ? Math.max(0, head.getBoundingClientRect().bottom) : 0) + gap;
+      var bar = document.querySelector(".screen:not([hidden]) .plbar.is-on");
+      var bottomLimit = window.innerHeight - (bar ? bar.offsetHeight : 0) - gap;
+      var r0 = el.getBoundingClientRect();
+      /* prvok ešte môže rásť (animácia výšky) a nad ním sa môže zbaľovať stará bublina: počítaj s konečným stavom */
+      var shift = 0;
+      document.querySelectorAll(".symmore-ghost").forEach(function(g){
+        if(g.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) shift += g.getBoundingClientRect().height;
+      });
+      var full = Math.max(r0.height, Number(el.getAttribute("data-full-h")) || 0);
+      var r = {top:r0.top - shift, bottom:r0.top - shift + full, height:full};
+      var delta = 0;
+      if(r.height > bottomLimit - topLimit) delta = r.top - topLimit;
+      else if(r.bottom > bottomLimit) delta = r.bottom - bottomLimit;
+      else if(r.top < topLimit) delta = r.top - topLimit;
+      if(Math.abs(delta) < 2) return;
+      softScrollTo(window.scrollY + delta);
+    }); });
   }
   function revealSymMore(box){ revealExpand(box); }
   function openSym(id){
     var prev = state.open;
     state.open = (state.open === id) ? null : id;
     renderSymptoms(prev && prev !== state.open ? prev : null);
+    focusSym(id);
     requestAnimationFrame(function(){
       if(prev && prev !== state.open){
         var old = document.querySelector('.symcard[data-for="'+prev+'"]');
@@ -2713,7 +3111,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(state.open === id){
       var box = document.querySelector('[data-more="'+id+'"]');
       if(box){
-        enterKids(box);
+        enterKids(box.querySelector(".symmore-copy") || box);
         revealExpand(box);
       }
     }
@@ -2729,82 +3127,106 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     state.noted = true;
     var other = state.symptoms.indexOf("other");
     if(other > -1) state.symptoms.splice(other, 1);
+    state.open = null;
+    renderSymptoms();
     renderSolutions();
-    revealSolutions();
-    var picked = $("#pickedList"); if(picked && !picked.hidden) enterKids(picked);
-    var range = $("#solRange"); if(range && !range.hidden) enterKids(range);
-    var nx = $("#plNext"); if(nx && !nx.hidden) enterKids(nx);
+    focusSym("other");
+  }
+  /* ---------- lišta zospodu ---------- */
+  /* v lište len počet (celý zoznam je v zelených kartách nad ňou), so slovenským tvarom podľa čísla */
+  var SK_PLURAL = window.Intl && Intl.PluralRules ? new Intl.PluralRules("sk") : null;
+  function plBarItemsText(){
+    var n = symList().filter(function(sy){ return sy.id !== "other"; }).length;
+    var note = !!(state.noted && state.descr);
+    var form = SK_PLURAL ? SK_PLURAL.select(n) : (n === 1 ? "one" : (n >= 2 && n <= 4 ? "few" : "other"));
+    var count = n ? n + " " + ({one:"závada", few:"závady"}[form] || "závad") : "";
+    if(!note) return count;
+    return count ? count + " + vlastný popis" : "Vlastný popis";
   }
   function renderSolutions(){
     var asked = hasAsk();
-    var block = $("#solutionsBlock");
-    if(block) block.classList.toggle("is-empty", !asked);
-    var img = $("#solHeroImg");
-    var name = $("#solHeroName");
-    if(img){
-      img.src = "itya-pipe-phone.png";
-      img.alt = state.model || "Zariadenie";
+    var bar = $("#plBar");
+    if(bar){
+      var wasOn = bar.classList.contains("is-on");
+      bar.classList.toggle("is-on", asked);
+      bar.setAttribute("aria-hidden", asked ? "false" : "true");
+      if(!asked) bar.setAttribute("inert", ""); else bar.removeAttribute("inert");
+      $("#plBarModel").textContent = state.model || "Zariadenie";
+      $("#plBarItems").textContent = asked ? plBarItemsText() : "";
+      var r = totalRange();
+      $("#plBarPrice").textContent = r ? formatRange(r.lo, r.hi) : (asked ? "podľa diagnostiky" : "");
     }
-    if(name) name.textContent = state.model || "Zariadenie";
-    var head = $("#solHead");
-    if(head){
-      head.hidden = !asked;
-      head.textContent = asked ? "Čo si popísal" : "Zhrnutie tvojho prípadu";
-    }
-    var picked = $("#pickedList");
-    if(picked){
-      var ph = pickedHtml();
-      picked.innerHTML = ph;
-      picked.hidden = !ph;
-    }
-    var range = solRangeHtml();
-    $("#solRange").innerHTML = range;
-    $("#solRange").hidden = !range;
     var cap = $("#symCap");
     if(cap){ var ch = capHtml(); cap.innerHTML = ch; cap.hidden = !ch; }
     var refurb = $("#refurbOffer");
     if(refurb){ var rh = refurbHtml(); refurb.innerHTML = rh; refurb.hidden = !rh; }
-    var nx = $("#plNext");
-    if(nx){ var nh = plNextHtml(); nx.innerHTML = nh; nx.hidden = !nh; }
     renderCoffee();
   }
-  function revealSolutions(){
-    var el = $("#solutionsBlock");
-    if(!el) return;
-    var r = el.getBoundingClientRect();
-    if(r.top < 80 || r.bottom > window.innerHeight - 16){
-      el.scrollIntoView({block:"nearest", behavior:"smooth"});
+  /* zdieľanie výberu: odkaz nesie model aj závady, otvorí presne tento stav (slúži aj ako uloženie) */
+  function shareUrl(){
+    var data = {b:state.brand, s:state.series, m:state.model,
+      z:state.symptoms.filter(function(x){ return x !== "other"; })};
+    if(state.noted && state.descr) data.p = state.descr;
+    return location.href.split("#")[0].split("?")[0] + "#vyber=" + encodeURIComponent(JSON.stringify(data));
+  }
+  var statusTimer = null;
+  function barStatus(msg){
+    var el = $("#plBarStatus"); if(!el) return;
+    clearTimeout(statusTimer);
+    el.textContent = msg;
+    statusTimer = setTimeout(function(){ el.textContent = ""; }, 5000);
+  }
+  function copyText(txt){
+    if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt);
+    return new Promise(function(ok, fail){
+      var ta = document.createElement("textarea");
+      ta.value = txt; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var done = false; try{ done = document.execCommand("copy"); }catch(e){}
+      document.body.removeChild(ta);
+      done ? ok() : fail();
+    });
+  }
+  function shareSelection(){
+    var url = shareUrl();
+    var copied = function(){ barStatus("Odkaz je skopírovaný. Otvoríš ním tento výber kedykoľvek neskôr."); };
+    var failed = function(){ barStatus("Odkaz sa nepodarilo skopírovať. Skopíruj ho z adresného riadka."); history.replaceState(null, "", url); };
+    var touch = window.matchMedia("(pointer:coarse)").matches;
+    if(navigator.share && touch){
+      navigator.share({title:"Oprava " + (state.model || "zariadenia"), text:"Môj výber opravy v ITYA", url:url})
+        .catch(function(e){ if(e && e.name === "AbortError") return; copyText(url).then(copied, failed); });
+      return;
     }
+    copyText(url).then(copied, failed);
+  }
+  function readShared(){
+    var m = location.hash.match(/^#vyber=(.+)$/);
+    if(!m) return null;
+    try{ var d = JSON.parse(decodeURIComponent(m[1])); return d && d.m ? d : null; }catch(e){ return null; }
+  }
+  function focusSym(id){
+    requestAnimationFrame(function(){
+      var b = document.querySelector('[data-sym="' + id + '"]');
+      if(b) b.focus({preventScroll:true});
+    });
   }
   function renderPriceList(){
     $("#plTitle").textContent = state.model ? "Oprava " + state.model : "Oprava";
+    var first = $('.pl-thumb[data-photo="0"]');
+    var heroImg = $("#solHeroImg");
+    if(heroImg){ heroImg.src = "itya-intake-front.png"; heroImg.alt = (state.model || "Zariadenie") + ", spredu"; }
+    $$("#plStack img").forEach(function(im){
+      var d = im.getAttribute("data-alt");
+      im.alt = (state.model || "Zariadenie") + (d ? ", " + d : "");
+    });
+    $$(".pl-thumb").forEach(function(b){ b.setAttribute("aria-current", b === first ? "true" : "false"); });
     var i = SCREENS.map(function(s){return s.id;}).indexOf("pricelist");
     SCREENS[i].url = "/servis/" + (state.model||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-    var ship = channelOf() === "ship";
-    var visit = $("#plVisit");
-    if(visit) visit.hidden = ship || state.visitOff;
     renderSymptoms(); renderSolutions();
-    $("#descr").value = state.descr;
+    var dEl = $("#descr"); if(dEl) dEl.value = state.descr;
   }
 
   /* ---------- fulfilment ---------- */
-  function fulfilCard(o){
-    var rows = o.rows.map(function(r){
-      var mark = r[0] === "Stojí" ? ' class="lede-em"' : "";
-      var val = r[2] ? r[1] : esc(r[1]);
-      return "<dt>"+esc(r[0])+"</dt><dd"+mark+">"+val+"</dd>";
-    }).join("");
-    var tag = o.tag ? '<span class="badge">'+esc(o.tag)+'</span>' : "";
-    var pic = o.img
-      ? '<img class="fu-pic'+(o.imgClass ? " "+o.imgClass : "")+'" src="'+esc(o.img)+'" alt="" width="232" height="164">'
-      : "";
-    return '<button class="pick" data-fulfil="'+o.id+'">'+tag+pic
-      + '<span class="fu-body"><span class="t">'+esc(o.t)+'</span><dl>'+rows+'</dl></span></button>';
-  }
-  function updateFulfilNext(){
-    var b = $("#fulfilNext");
-    if(b) b.disabled = state.fulfil !== "packeta" && state.fulfil !== "kurier";
-  }
   function coffeeBoxOf(el){
     return el && el.closest ? el.closest(".walk-upsell") : null;
   }
@@ -2948,73 +3370,12 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       }
     });
   }
+  /* ---------- jednokroková objednávka ---------- */
+  function shipPicked(){ return state.fulfil === "packeta" || state.fulfil === "kurier"; }
   function renderFulfil(){
-    var box = $("#fulfil");
-    if(box) box.innerHTML = FULFIL.filter(function(f){ return f.id !== "osobne"; }).map(fulfilCard).join("");
-    $$("[data-fulfil]").forEach(function(btn){
-      btn.setAttribute("aria-pressed", btn.getAttribute("data-fulfil") === state.fulfil ? "true":"false");
-    });
-    renderBranch();
-    updateFulfilNext();
-  }
-  function renderFulfilStep(){
-    var recap = $("#fuRecap");
-    if(recap){
-      var ph = pickedHtml({fulfil:true, fulfilWait:true, fulfilClear:true});
-      recap.innerHTML =
-        heroHtml()
-        + '<h3 class="sol-head">Čo si popísal</h3>'
-        + '<div class="picked">'+(ph || '<p class="picked-empty">Zatiaľ nič nevybraté. Vyber vľavo, čo je so zariadením, alebo to popíš vlastnými slovami.</p>')+'</div>'
-        + '<div class="sol-range">'+solRangeHtml()+'</div>'
-        + '<div class="plnext" id="fuNext">'+fuNextHtml()+'</div>';
-    }
-    var slug = (state.model||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-    var i = SCREENS.map(function(s){return s.id;}).indexOf("fulfil");
-    if(i > -1) SCREENS[i].url = "/servis/" + (slug ? slug+"/" : "") + "dorucenie";
-    renderFulfil();
-  }
-  function deviceValue(){
-    var m = state.model || "";
-    var exact = {
-      "iPhone 17 Pro Max":1400,"iPhone 17 Pro":1200,"iPhone 17":950,
-      "iPhone 16 Pro":1100,"iPhone 16":800,
-      "iPhone 15 Pro":850,"iPhone 15":650,
-      "iPhone 14 Pro":700,"iPhone 14":480,
-      "iPhone 13 Pro":520,"iPhone 13":280,
-      "iPhone 12":200,"iPhone 11":150,"iPhone SE 3":180,
-      "iPad Pro 13\" M4":1100,"iPad Air M3":650,"iPad 11\" 2025":420,"iPad 10":280,"iPad mini 7":450,
-      "MacBook Air M4":1100,"MacBook Air M2":700,"MacBook Pro 14\" M4":1800,"MacBook Pro 16\" M3":2000,
-      "iMac 24\" M4":1400,"iMac 24\" M1":800,
-      "Watch Series 10":350,"Watch SE 2":180,"Watch Ultra 2":700,
-      "Galaxy S25 Ultra":900,"Galaxy S24":450,"Galaxy S23":280,
-      "Galaxy A56":250,"Galaxy A35":180,"Galaxy Tab S10":500,
-      "Pixel 10 Pro":800,"Pixel 9":450,"Pixel 8a":280,
-      "Redmi Note 14 Pro":220,"Redmi Note 13":160,"Xiaomi 15":650,"Xiaomi 14T":380,
-      "PlayStation 5":400,"PlayStation 5 Pro":650,
-      "Xbox Series X":400,"Xbox Series S":220,
-      "Nintendo Switch 2":400,"Nintendo Switch OLED":250
-    };
-    if(exact[m]) return exact[m];
-    var bySeries = {iPhone:280,iPad:400,MacBook:900,iMac:1200,"Apple Watch":220,
-      "Galaxy S":550,"Galaxy A":180,Tab:350,Pixel:400,Redmi:180,Xiaomi:400,
-      PlayStation:400,Xbox:350,Nintendo:280};
-    return bySeries[state.series] || 300;
-  }
-  function insureField(){
-    var v = deviceValue();
-    var over = v > 700;
-    var std = state.insure !== "extra";
-    return '<div><span class="label">Poistenie zásielky</span>'
-      + '<div class="grid g2" style="margin-top:var(--s1)">'
-      + '<button type="button" class="pick" data-insure="standard" aria-pressed="'+std+'">'
-      + '<span class="t">Štandard Packeta <em>zdarma</em></span>'
-      + '<span class="d">Krytie do 700 €. Orientačná hodnota tohto modelu je cca '+v+' €.</span></button>'
-      + '<button type="button" class="pick" data-insure="extra" aria-pressed="'+(!std)+'">'
-      + '<span class="t">Pripoistiť drahšiu zásielku</span>'
-      + '<span class="d">'+(over
-        ? "Tento model je nad 700 €. Pripoistenie doplníme pri potvrdení telefonátu."
-        : "Ak chceš krytie nad 700 €. Doplatok upresníme pri potvrdení.")+'</span></button>'
-      + '</div></div>';
+    $$('input[name="co-delivery"]').forEach(function(r){ r.checked = r.value === state.fulfil; });
+    var addr = $("#coAddr"); if(addr) addr.hidden = state.fulfil !== "kurier";
+    renderSummary();
   }
   var STORE_CARD = '<div class="card acc"><span class="label">Kde nás nájdeš</span><h4 style="margin-top:var(--s1)">OC Retro, Nevädzová 6, Bratislava</h4>'
     +'<p style="margin-top:var(--s1)">1. poschodie pri Food Courte. Po–Pi 10:00–19:00, So 10:00–17:00, Ne 10:00–15:00. Parkovanie 2 hodiny zadarmo.</p></div>';
@@ -3049,68 +3410,18 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       else el.outerHTML = html;
     });
   }
-  function branchHtml(id){
-    if(id === "osobne"){
-      return STORE_CARD + '<p class="hint" style="margin-top:var(--s2)">Diagnostika je na predajni <strong>zdarma</strong>. Ak opravu nechceš, neplatíš nič.</p>';
-    }
-    if(id === "packeta"){
-      return insureField();
-    }
-    return '<h3 style="font-size:var(--t-body);margin-bottom:var(--s2)">Kam má prísť kuriér?</h3>'
-      +'<div class="grid g2" style="max-width:520px">'
-      +'<div class="field"><span class="label">Ulica a číslo</span><input class="input" placeholder="Štefánikova 12"></div>'
-      +'<div class="field"><span class="label">Mesto a PSČ</span><input class="input" placeholder="949 01 Nitra"></div>'
-      +'<div class="field"><span class="label">Kedy ťa zastihne</span><input class="input" placeholder="Pracovné dni 9:00–17:00"></div>'
-      +'</div>'
-      +'<p class="hint" style="margin-top:var(--s2)">Kuriér príde po zásielku, ty ju len zabalíš. Štítok prinesie on. Spiatočná zásielka ide na rovnakú adresu.</p>';
-  }
-  function renderBranch(){
-    var el = $("#branch"); if(!el) return;
-    if(!state.fulfil){
-      el.innerHTML = '<p class="hint">Ešte si nevybral, ako to chceš vybaviť. <button class="btn link" data-go="fulfil">Vybrať spôsob</button></p>';
-      return;
-    }
-    var f = fulfilOf();
-    el.innerHTML = '<p class="hint" style="margin-bottom:var(--s2)">Vybavuješ to: <strong>'+esc(f.t)+'</strong>, <button class="btn link" data-go="fulfil">zmeniť</button></p>'
-      + branchHtml(state.fulfil);
-  }
 
-  /* ---------- wizard: rekapitulácia ---------- */
-  function renderRecap(){
-    var recap = $("#recap");
-    if(!recap) return;
-    recap.innerHTML =
-      '<div class="rrow"><span class="k">Zariadenie</span><span class="v">'+esc(state.model)+'</span>'
-      + '<button class="btn link" data-go="picker">zmeniť</button>'
-      + '<span class="sub">'+esc(state.brand)+' · '+esc(state.series)+'</span></div>'
-
-      + '<div class="rrow"><span class="k">'+(symCount() > 1 ? "Čo všetko mu je" : "Čo sa s ním stalo")+'</span>'
-      + '<span class="v">'+(symCount() ? esc(symNames().join(" + ")) : "zatiaľ nevybraté")+'</span>'
-      + '<button class="btn link" data-go="pricelist">zmeniť</button>'
-      + (state.descr ? '<span class="sub">„'+esc(state.descr)+'“</span>'
-                     : '<span class="sub" style="color:var(--muted)">Vlastný popis si nepridal, <button class="btn link" data-go="pricelist">doplniť</button></span>')
-      + '</div>'
-
-      + '<div class="rrow"><span class="k">Spôsob</span><span class="v">'+(state.fulfil ? esc(fulfilOf().short) : "zatiaľ nevybraté")+'</span>'
-      + '<button class="btn link" data-go="fulfil">zmeniť</button></div>';
-  }
-  function renderAddons(){
-    $("#addons").innerHTML = ADDONS.map(function(a){
-      var on = state.addons.indexOf(a.id) > -1;
-      return '<button class="pick" data-addon="'+a.id+'" aria-pressed="'+on+'">'
-        + '<span class="t">'+esc(a.t)+' <em>'+a.p+' €</em></span><span class="d">'+esc(a.d)+'</span></button>';
-    }).join("");
-  }
   function renderSummary(){
-    paintHero($("#wizHero"));
-    var picked = $("#wizPicked");
-    if(picked){
-      var ph = pickedHtml({addons:true, fulfil:true});
-      picked.innerHTML = ph || '<p class="picked-empty">Zatiaľ nič nevybraté. Vyber vľavo, čo je so zariadením, alebo to popíš vlastnými slovami.</p>';
-    }
-    var range = $("#wizRange");
-    if(range) range.innerHTML = solRangeHtml({addons:true, fee:true});
-    paintWizNext();
+    var body = $("#coSumBody");
+    if(!body) return;
+    var items = pickedHtml({readonly:true});
+    var f = shipPicked() ? fulfilOf(state.fulfil) : null;
+    var ship = pickrowHtml("Doprava tam aj späť" + (f ? " · " + esc(f.short) : ""), "zadarmo", "");
+    body.innerHTML = heroHtml()
+      + '<div class="picked">' + (items || '<p class="picked-empty">Zatiaľ nič nevybraté.</p>') + '</div>'
+      + '<button type="button" class="btn link" data-go="pricelist">Upraviť závady</button>'
+      + '<div class="picked">' + ship + '</div>'
+      + '<div class="sol-range">' + solRangeHtml({short:true}) + '</div>';
   }
   function visibleKids(nodes){
     return Array.prototype.filter.call(nodes, function(n){
@@ -3122,15 +3433,12 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   }
   function sectionKids(screen){
     var id = screen.getAttribute("data-screen");
-    if(id === "wizard"){
-      var list = [];
-      var steps = screen.querySelector(":scope > .wsteps");
-      if(steps) list.push(steps);
-      var pane = screen.querySelector("[data-wstep]:not([hidden])");
-      if(pane) list = list.concat(visibleKids(pane.children));
-      var aside = screen.querySelector(".wlayout .sol-panel") || screen.querySelector(".summary");
-      if(aside) list.push(aside);
-      return list;
+    if(id === "fulfil"){
+      var co = screen.querySelector(".co-layout");
+      var ctx = screen.querySelector("[data-ctx]");
+      var head = screen.querySelector(".co-head");
+      var secs = visibleKids(screen.querySelectorAll(".co-form > *"));
+      return [ctx, head, screen.querySelector(".co-side")].concat(secs).filter(Boolean);
     }
     if(id === "out"){
       var page = screen.querySelector(":scope > .outpage");
@@ -3164,24 +3472,6 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(!el || el.hidden) return;
     requestAnimationFrame(function(){ playEnter(el, true); });
   }
-  function setStep(n, skipEnter){
-    if(n > 2) n = 2;
-    if(n < 1) n = 1;
-    state.step = n;
-    if(n === 2) renderBranch();
-    $$("[data-wstep]").forEach(function(d){ d.hidden = d.getAttribute("data-wstep") !== String(n); });
-    $$("#wsteps button").forEach(function(b){
-      var i = Number(b.getAttribute("data-step"));
-      b.setAttribute("aria-current", i === n ? "true":"false");
-      b.classList.toggle("done", i < n);
-    });
-    paintWizNext();
-    if(!skipEnter){
-      var pane = document.querySelector('[data-wstep="'+n+'"]');
-      playEnter(pane, true);
-      var nx = $("#wizNext"); if(nx && !nx.hidden) enterKids(nx);
-    }
-  }
 
   /* ---------- confirm ---------- */
   var PACK_VIDEO = '<div class="ph tall" style="margin-top:var(--s2)">video · ako správne zabaliť telefón (60 s)</div>';
@@ -3190,7 +3480,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       return '<div class="card"><span class="label">Krok '+(i+1)+'</span><h4 style="margin-top:var(--s1)">'+s[0]+'</h4><p>'+s[1]+'</p></div>';
     }).join("")+'</div>'+PACK_VIDEO;
   }
-  var PACK_DATA_HINT = '<p class="hint" style="margin-top:var(--s2)">Kód od telefónu väčšinou nepotrebujeme a do tvojich súborov nevstupujeme. Zálohu odporúčame, nevyžadujeme. <button class="btn link" data-go="data">Ako pracujeme s tvojimi dátami →</button></p>';
+  var PACK_DATA_HINT = '<p class="hint" style="margin-top:var(--s2)">Kód od telefónu väčšinou nepotrebujeme a do tvojich súborov nevstupujeme. Zálohu odporúčame, nevyžadujeme. <button class="btn link" data-go="data">Ako pracujeme s tvojimi dátami<span class="arr" aria-hidden="true">&nbsp;→</span></button></p>';
   var PACK_ZBOX = packCards([
     
   ["Zabaľ","Telefón do bublinkovej fólie, do pevnej krabice, vypchať. Nabíjačku ani obal neposielaj."],
@@ -3198,10 +3488,9 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     ["Vhoď do Z‑BOXu","Kód zadáš na displeji, vyberieš veľkosť schránky a vložíš. Funguje nonstop."]
   ]);
   var PACK_COURIER = packCards([
-    
-  ["Zabaľ","Telefón do bublinkovej fólie, do pevnej krabice, vypchať. Nabíjačku ani obal neposielaj."],
-    ["Čakaj na kuriéra","Štítok prinesie on. Nič netlač a na krabicu nepíš kód."],
-    ["Odovzdaj","Kuriér príde na tvoju adresu v čase zvozu. Zásielku mu podáš zabalenú."]
+    ["Zabaľ","Telefón do bublinkovej fólie, do pevnej krabice, vypchať. Nabíjačku ani obal neposielaj."],
+    ["Počkaj na e‑mail","Pošleme ti pokyny k vyzdvihnutiu: kedy kuriér príde. Štítok netlač, prinesie ho on."],
+    ["Odovzdaj","V termíne z e‑mailu podáš kuriérovi zabalenú zásielku na adrese z objednávky."]
   ]);
 
   var CONFIRM = {
@@ -3210,10 +3499,10 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       body:'<div class="codebox"><span class="label">Tvoj kód pre Packetu</span><div class="c">482 019 573</div>'
         +'<p class="hint">Napíš ho na krabicu. Žiadnu nálepku ani tlačiareň nepotrebuješ.</p></div>'+PACK_ZBOX+PACK_DATA_HINT,
       next:"Po doručení urobíme diagnostiku a pošleme ti presnú cenu e‑mailom aj SMS. <strong>Bez tvojho súhlasu neopravujeme nič.</strong> Ak cenu odmietneš, zariadenie posielame späť a účtujeme 35 € za diagnostiku."},
-    kurier:{h:"Máme to. Kuriér príde zajtra medzi 9:00 a 17:00.",
-      l:"Do 30 minút ti zavoláme, potvrdíme model a poradíme s balením. <span class=\"lede-em\">Štítok tlačiť nemusíš, kuriér ho prinesie so sebou.</span>",
-      body:'<div class="card acc"><span class="label">Vyzdvihnutie</span><h4 style="margin-top:var(--s1)">Utorok 16. 9., 9:00 – 17:00</h4>'
-        +'<p style="margin-top:var(--s1)">Štefánikova 12, 949 01 Nitra. Ak ti termín nevyhovuje, presunieme ho po telefóne.</p></div>'+PACK_COURIER+PACK_DATA_HINT,
+    kurier:{h:"Máme to. Zariadenie zabaľ a počkaj na náš e‑mail.",
+      l:"Do 30 minút ti zavoláme, potvrdíme model a poradíme s balením. <span class=\"lede-em\">Pokyny k vyzdvihnutiu kuriérom ti pošleme e‑mailom.</span>",
+      body:'<div class="card acc"><span class="label">Vyzdvihnutie</span><h4 style="margin-top:var(--s1)">Termín ti príde e‑mailom</h4>'
+        +'<p style="margin-top:var(--s1)">V e‑maile bude, kedy kuriér príde na adresu z objednávky. Ak ti termín nevyhovuje, odpíš nám a presunieme ho.</p></div>'+PACK_COURIER+PACK_DATA_HINT,
       next:"Po doručení urobíme diagnostiku a pošleme ti presnú cenu e‑mailom aj SMS. <strong>Bez tvojho súhlasu neopravujeme nič.</strong> Ak cenu odmietneš, zariadenie posielame späť a účtujeme 35 € za diagnostiku."},
     osobne:{h:"Tešíme sa, čakáme ťa.",
       l:"Diel na tvoju opravu si odkladáme. <span class=\"lede-em\">Objednávať sa nemusíš, ak prídeš inokedy, nič sa nedeje.</span>",
@@ -3223,12 +3512,12 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
         +'<div class="card"><span class="label">Vezmi si</span><h4 style="margin-top:var(--s1)">Len zariadenie</h4><p>Nabíjačku ani obal nepotrebujeme.</p></div>'
         +'<div class="card"><span class="label">Pred príchodom</span><h4 style="margin-top:var(--s1)">Priprav si dáta</h4><p>Kód od telefónu väčšinou nepotrebujeme. Ak môžeš, sprav si zálohu, pri displeji či batérii o dáta neprídeš, pri zásahu do dosky ti to zaručiť nevieme.</p></div>'
         +'<div class="card"><span class="label">Na mieste</span><h4 style="margin-top:var(--s1)">Diagnostika na počkanie</h4><p>Cenu poviem hneď, opravu väčšinou stihneme do pár hodín.</p></div></div>',
-      next:"Diagnostiku urobíme na mieste a cenu ti povieme hneď. <strong>Bez tvojho súhlasu neopravujeme nič.</strong> Ak opravu nechceš, nič neplatíš, diagnostika je na predajni zdarma."}
+      next:"Diagnostiku urobíme na mieste a cenu ti povieme hneď. <strong>Bez tvojho súhlasu neopravujeme nič.</strong> Ak opravu nechceš, nič neplatíš, diagnostika je na predajni zadarmo."}
   };
   function renderConfirm(){
     var c = CONFIRM[fulfilOf().id];
     $("#cfTitle").textContent = c.h; $("#cfLede").innerHTML = c.l;
-    $("#cfBody").innerHTML = c.body; $("#cfNext").innerHTML = c.next;
+    $("#cfBody").innerHTML = c.body;
   }
 
   var QUOTE = {
@@ -3357,13 +3646,13 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   function show(id){
     if(!SCREENS.some(function(s){ return s.id===id; })) return;
     setMenu(false);
+    var prevScreen = state.screen;
     if(id === "data" && state.screen && state.screen !== "data") state.dataFrom = state.screen;
     state.screen = id;
     if(id === "data") renderDataBack();
     if(id === "picker") renderPicker();
     if(id === "pricelist"){ renderPriceList(); syncBreath(); }
-    if(id === "fulfil") renderFulfilStep();
-    if(id === "wizard"){ renderRecap(); renderAddons(); setStep(1, true); }
+    if(id === "fulfil") renderFulfil();
     if(id === "confirm") renderConfirm();
     if(id === "quote"){
       $("#qCrumb").textContent = "Objednávka č. SK‑24817 · " + state.model;
@@ -3402,7 +3691,20 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     window.scrollTo({top:0, behavior:"instant"});
     var shown = document.querySelector('.screen[data-screen="'+id+'"]');
     playEnter(shown);
-    if(id === "home") requestAnimationFrame(drawRing);
+    /* nová obrazovka: titulok karty a fokus na jej nadpis, aby čítačka aj klávesnica vedeli, kde sú */
+    var scT = SCREENS.filter(function(s){ return s.id === id; })[0];
+    var outT = id === "out" && OUT[state.outKey] ? OUT[state.outKey].t : null;
+    var pageT = id === "pricelist" ? $("#plTitle").textContent : (outT || (scT && scT.name) || "ITYA");
+    document.title = id === "home" ? HOME_TITLE : (pageT + " · ITYA servis");
+    if(prevScreen && prevScreen !== id){
+      var h1 = shown && shown.querySelector("h1");
+      if(h1){ h1.setAttribute("tabindex", "-1"); h1.focus({preventScroll:true}); }
+    }
+    if(id === "home"){
+      requestAnimationFrame(drawRing);
+      /* uzly počas vstupu ešte idú o 8 px nižšie; po animácii prekresli, nech šípky sedia */
+      setTimeout(drawRing, 1100);
+    }
     if(id === "status"){
       var stRet = $("#stReturn");
       if(stRet && !stRet.hidden) revealExpand(stRet);
@@ -3411,19 +3713,14 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
 
   function setFulfil(id){
     if(id === "osobne") return;
+    var addr = $("#coAddr");
+    var wasAddr = addr && !addr.hidden;
     state.fulfil = id;
     state.channel = channelFromFulfil(id);
-    $$("[data-fulfil]").forEach(function(b){
-      b.setAttribute("aria-pressed", b.getAttribute("data-fulfil") === id ? "true":"false");
-    });
-    renderBranch(); renderSummary(); renderCtx();
-    updateFulfilNext();
-    if(state.screen === "fulfil"){
-      renderFulfilStep();
-      enterKids($("#fuRecap"));
-      enterKids($("#fulfil"));
-    }
-    if(state.screen === "wizard"){ enterKids($("#branch")); revealExpand($("#branch")); }
+    renderFulfil(); renderCtx();
+    var set = $("#coDelivery");
+    if(set){ set.classList.remove("is-invalid"); var de = $("#coDelErr"); if(de) de.hidden = true; }
+    if(addr && !addr.hidden && !wasAddr){ enterKids(addr); revealExpand(addr); }
     if(state.screen === "confirm") renderConfirm();
     if(state.screen === "status"){
       renderStatus();
@@ -3447,12 +3744,6 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       setMenu($("#navTog").getAttribute("aria-expanded") !== "true");
       return;
     }
-    if(t.closest("[data-visit-off]")){
-      state.visitOff = true;
-      var visit = $("#plVisit");
-      if(visit) visit.hidden = true;
-      return;
-    }
     if(t.closest("#sitenav, .headpin")) setMenu(false);
     else if(document.querySelector(".sitehead.is-open") && !t.closest(".sitehead")) setMenu(false);
 
@@ -3468,7 +3759,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
         var bar = $(".bar");
         var pad = (bar ? bar.getBoundingClientRect().height : 56) + 16;
         var y = el.getBoundingClientRect().top + window.scrollY - pad;
-        window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
+        softScrollTo(y);
         el.classList.remove("flash");
         void el.offsetWidth;
         el.classList.add("flash");
@@ -3655,17 +3946,33 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(symOff){ setSym(symOff.getAttribute("data-symoff"), false); return; }
     if(t.closest("[data-noteoff]")){
       state.noted = false;
+      if(state.open === "other") state.open = null;
+      if(state.screen === "pricelist"){ renderSymptoms(); focusSym("other"); }
       renderSolutions(); renderSummary();
-      if(state.screen === "fulfil") renderFulfilStep();
       return;
     }
     if(t.closest("[data-symfree]")){
-      var d = $("#descr"); if(d) d.focus();
+      if(state.screen !== "pricelist"){ show("pricelist"); }
+      if(state.open !== "other") openSym("other");
+      requestAnimationFrame(function(){
+        var d = $("#descr");
+        if(d){ d.focus({preventScroll:true}); revealExpand(d.closest(".symmore")); }
+      });
       return;
     }
     if(t.closest("[data-descr-add]")){ addDescr(); return; }
     var pickSym = t.closest("[data-symchoose]");
     if(pickSym){ setSym(pickSym.getAttribute("data-symchoose"), true); return; }
+    var ph = t.closest("[data-photo]");
+    if(ph){
+      var idx = Number(ph.getAttribute("data-photo"));
+      var main = $("#solHeroImg");
+      var src = ph.querySelector("img").getAttribute("src");
+      if(main){ main.src = src; main.alt = (state.model || "Zariadenie") + ", " + ph.getAttribute("aria-label").replace(/^Fotka \d+ z \d+: /, "").toLowerCase(); }
+      $$(".pl-thumb").forEach(function(b){ b.setAttribute("aria-current", b === ph ? "true" : "false"); });
+      return;
+    }
+    if(t.closest("[data-share]")){ shareSelection(); return; }
     var drop = t.closest("[data-symdrop]");
     if(drop){ setSym(drop.getAttribute("data-symdrop"), false); return; }
     var sy = t.closest("[data-sym]");
@@ -3674,45 +3981,7 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
       return;
     }
 
-    var ins = t.closest("[data-insure]");
-    if(ins){
-      state.insure = ins.getAttribute("data-insure");
-      $$("[data-insure]").forEach(function(b){
-        b.setAttribute("aria-pressed", b.getAttribute("data-insure") === state.insure ? "true":"false");
-      });
-      enterKids($("#branch"));
-      revealExpand($("#branch"));
-      return;
-    }
 
-    var f = t.closest("[data-fulfil]");
-    if(f){ setFulfil(f.getAttribute("data-fulfil")); return; }
-    if(t.closest("[data-fulfiloff]")){
-      state.fulfil = null;
-      renderFulfilStep(); renderSummary(); renderBranch(); renderCtx();
-      return;
-    }
-
-    var addonOff = t.closest("[data-addonoff]");
-    if(addonOff){
-      var oid = addonOff.getAttribute("data-addonoff");
-      var ok = state.addons.indexOf(oid);
-      if(ok > -1) state.addons.splice(ok,1);
-      renderAddons(); renderSummary();
-      var wp = $("#wizPicked"); if(wp) enterKids(wp);
-      return;
-    }
-    var ad = t.closest("[data-addon]");
-    if(ad){ var id = ad.getAttribute("data-addon"); var k = state.addons.indexOf(id);
-      if(k > -1) state.addons.splice(k,1); else state.addons.push(id);
-      renderAddons(); renderSummary();
-      enterKids($("#addons")); var wpa = $("#wizPicked"); if(wpa) enterKids(wpa);
-      return; }
-
-    var wgo = t.closest("[data-wgo]");
-    if(wgo){ setStep(Number(wgo.getAttribute("data-wgo"))); window.scrollTo({top:0,behavior:"instant"}); return; }
-    var ws = t.closest("#wsteps button");
-    if(ws){ setStep(Number(ws.getAttribute("data-step"))); return; }
 
     var q = t.closest("[data-quote]");
     if(q && !q.hasAttribute("data-quote-ok") && !q.hasAttribute("data-quote-back")){
@@ -3736,7 +4005,8 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(!d || d.tagName !== "DETAILS" || !d.open) return;
     revealExpand(d.closest(".symmore") || d);
   }, true);
-  $("#descr").addEventListener("input", function(e){
+  document.addEventListener("input", function(e){
+    if(!e.target || e.target.id !== "descr") return;
     state.descr = e.target.value;
     if(!e.target.value.trim() && state.noted){
       state.noted = false;
@@ -3790,8 +4060,9 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
   });
   $("#resetBtn").addEventListener("click", function(){
     state = JSON.parse(JSON.stringify(DEFAULT));
-    $("#q").value = ""; $("#descr").value = "";
+    $("#q").value = ""; var dR = $("#descr"); if(dR) dR.value = "";
     resetCoffeeForm();
+    var coF = $("#coForm"); if(coF){ coF.reset(); clearCoErrors(); }
     renderPicker(); renderFulfil(); show("home");
   });
 
@@ -3823,8 +4094,69 @@ p{font-size:var(--t-body); line-height:var(--lh-body)}
     if(!/^(Prečo|Podopiera to|Vymyslené|Pozor|Princíp|Dôkaz|Vzorový obsah):?\s*$/.test(em.textContent.trim())) return;
     em.classList.add("anno-k");
   });
+  /* objednávka: kontrola až pri odoslaní, chyba pri poli, fokus na prvé zlé pole */
+  var CO_FIELDS = {
+    coName:  function(v){ return v.trim().length > 1; },
+    coEmail: function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); },
+    coTel:   function(v){ return v.replace(/\D/g, "").length >= 9; },
+    coStreet:function(v){ return v.trim().length > 2; },
+    coCity:  function(v){ return v.trim().length > 1; },
+    coZip:   function(v){ return v.replace(/\D/g, "").length === 5; }
+  };
+  function markCo(id, ok){
+    var el = $("#" + id); if(!el) return;
+    var field = el.closest(".field");
+    if(field) field.classList.toggle("is-invalid", !ok);
+    el.setAttribute("aria-invalid", ok ? "false" : "true");
+    var err = $("#" + id + "Err"); if(err) err.hidden = ok;
+  }
+  function clearCoErrors(){
+    Object.keys(CO_FIELDS).forEach(function(id){ markCo(id, true); });
+    var set = $("#coDelivery"); if(set) set.classList.remove("is-invalid");
+    var de = $("#coDelErr"); if(de) de.hidden = true;
+  }
+  $("#coForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var bad = [];
+    ["coName", "coEmail", "coTel"].forEach(function(id){
+      var ok = CO_FIELDS[id]($("#" + id).value); markCo(id, ok); if(!ok) bad.push($("#" + id));
+    });
+    var set = $("#coDelivery");
+    var shipOk = shipPicked();
+    set.classList.toggle("is-invalid", !shipOk);
+    $("#coDelErr").hidden = shipOk;
+    if(!shipOk) bad.push($('input[name="co-delivery"]'));
+    ["coStreet", "coCity", "coZip"].forEach(function(id){
+      var need = state.fulfil === "kurier";
+      var ok = !need || CO_FIELDS[id]($("#" + id).value); markCo(id, ok); if(!ok) bad.push($("#" + id));
+    });
+    if(bad.length){
+      softScrollToCenter(bad[0]);
+      bad[0].focus({preventScroll:true});
+      return;
+    }
+    show("confirm");
+  });
+  document.addEventListener("change", function(e){
+    if(e.target && e.target.name === "co-delivery") setFulfil(e.target.value);
+  });
+  document.addEventListener("input", function(e){
+    var id = e.target && e.target.id;
+    if(!id || !CO_FIELDS[id]) return;
+    if(e.target.getAttribute("aria-invalid") === "true" && CO_FIELDS[id](e.target.value)) markCo(id, true);
+  });
+
   renderPicker(); renderFulfil();
-  show("home");
+  var shared = readShared();
+  if(shared){
+    state.brand = shared.b || null; state.series = shared.s || null; state.model = shared.m;
+    state.symptoms = (shared.z || []).filter(function(id){ return !!symById(id); });
+    if(shared.p){ state.descr = String(shared.p); state.noted = true; }
+    renderPicker();
+    show("pricelist");
+  } else {
+    show("home");
+  }
   setTimeout(drawRing, 60);
 })();
 </script>
